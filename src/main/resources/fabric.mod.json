@@ -13,7 +13,7 @@
     "sources": "https://github.com/not-coded/NameFabric"
   },
 
-  "license": "MIT",
+  "license": "LGPL-2.1",
   "icon": "assets/namefabric/icon.png",
 
   "environment": "*",
