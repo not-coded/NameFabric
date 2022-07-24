@@ -1,0 +1,14 @@
+{
+  "command.all.error": "§8[§7NameFabric§8] §7An error occurred!",
+  "command.all.invalid.uuid": "§8[§7NameFabric§8] §7Invalid UUID!",
+  "command.all.invalid.name": "§8[§7NameFabric§8] §7Invalid name!",
+
+  "command.getskin.success": "§8[§7NameFabric§8] §7The current skin of §f%s §7is: %s",
+
+  "command.getuuid.name.success": "§8[§7NameFabric§8] §7The uuid of §f%s §7is: §f%s",
+  "command.getuuid.uuid.success": "§8[§7NameFabric§8] §7The name of §f%s §7is: §f%s",
+
+  "command.getcape.success": "§8[§7NameFabric§8] §7The current cape of §f%s §7is the §f%s §7cape.",
+
+  "command.namehistory.success": "§8[§7NameFabric§8] §7The past usernames of §f%s §7are: §f%s"
+}

@@ -1,38 +1,36 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "namefabric",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "NameFabric",
+  "description": "NameFabric, the mod that shows you public player data like past usernames, current skin, and more using the Mojang's API.",
   "authors": [
-    "Me!"
+    "NotCoded"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://notcoded.cf/namefabric",
+    "sources": "https://github.com/not-coded/NameFabric"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "MIT",
+  "icon": "assets/namefabric/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "net.notcoded.namefabric.Main"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "namefabric.mixins.json"
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.6",
-    "fabric": "*",
-    "minecraft": "~1.19",
-    "java": ">=17"
+    "fabricloader": ">=0.13.3",
+    "minecraft": "1.19.x",
+    "java": ">=11"
   },
   "suggests": {
-    "another-mod": "*"
   }
 }
