@@ -2,6 +2,8 @@
 
 NameFabric, the mod that shows you public player data like past usernames, current skin, and more using the Mojang's API.
 
+**Disclaimer**: This **REQUIRES** [Fabric API]https://www.curseforge.com/minecraft/mc-mods/fabric-api
+
 ## Features
 - /namehistory | Gets the past names of the specified player
 
