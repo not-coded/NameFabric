@@ -15,6 +15,8 @@ We have a discord now! **[Discord](https://discord.gg/bChCtfB9eS)**
 
 ## Known Issues:
 - If you put anything with the same length as 32 or 36 it will cause an error in the commands.
+- Commands sometimes say "Invalid name/uuid", even though it is valid, and "An error occurred".
+- Commands sometimes cause random errors that aren't shown in chat.
 
 ## Credits:
 - [NameMC](https://namemc.com/capes) - Capes List
