@@ -3,12 +3,12 @@ package net.notcoded.namefabric.command;
 import com.google.gson.*;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.minecraft.text.TranslatableText;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -43,14 +43,14 @@ public class namehistory {
                                 try {
                                     return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception ignored) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.translatable("command.all.error"));
+                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
-                                    } catch (JsonIOException e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.translatable("command.all.error"));
+                                } catch (Exception ignored) {
+                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -77,14 +77,14 @@ public class namehistory {
                             String player = names.get(names.size() - 1);
                             cacheByName.put(player, names);
                             cacheByUuid.put(uuid, names);
-                            client.sendMessage(Text.translatable("command.namehistory.success", player, String.join(", ", names)));
+                            client.sendMessage(new TranslatableText("command.namehistory.success", player, String.join(", ", names)), false);
                         } else {
-                            client.sendMessage(Text.translatable("command.all.error"));
+                            client.sendMessage(new TranslatableText("command.all.error"), false);
                         }
                     }));
         } else{
             isUsingPlayerName = false;
-            client.sendMessage(Text.translatable("command.all.invalid.uuid"));
+            client.sendMessage(new TranslatableText("command.all.invalid.uuid"), false);
             return Command.SINGLE_SUCCESS;
         }
         return Command.SINGLE_SUCCESS;
@@ -112,10 +112,10 @@ public class namehistory {
                             isUsingPlayerName = true;
                             getNamesUUID(source, uuid);
                         } catch (Exception e) {
-                            source.getPlayer().sendMessage(Text.translatable("command.all.error"));
+                            source.getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                         }
                     } else{
-                        source.getPlayer().sendMessage(Text.translatable("command.all.invalid.name"));
+                        source.getPlayer().sendMessage(new TranslatableText("command.all.invalid.name"), false);
                     }
                 }));
         return Command.SINGLE_SUCCESS;

@@ -4,16 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import net.notcoded.namefabric.Main;
+import net.minecraft.text.*;
 import net.notcoded.namefabric.utilities.Utilities;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -41,13 +37,13 @@ public class getskin {
                                 try {
                                     return getSkinsUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.translatable("command.all.error"));
+                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                                 }
                             } else {
                                 try {
                                     return getSkinsPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.translatable("command.all.error"));
+                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                                 }
                             }
                             return Command.SINGLE_SUCCESS;
@@ -78,7 +74,7 @@ public class getskin {
                                     skinurl = new String(Utilities.Decode64(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
                                 }
                             } catch (Exception e) {
-                                player.sendMessage(Text.translatable("command.all.error"));
+                                player.sendMessage(new TranslatableText("command.all.error"), false);
                             }
                             try{
                                 if(skinurl != null && !skinurl.equals("")){
@@ -86,22 +82,22 @@ public class getskin {
                                     skinurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").getAsString();
                                 }
                             } catch (Exception e){
-                                player.sendMessage(Text.translatable("command.all.error"));
+                                player.sendMessage(new TranslatableText("command.all.error"), false);
                             }
 
                             String finalSkinurl = skinurl;
-                            Text skinText = Text.literal(finalSkinurl).styled(style -> style
+                            Text skinText = new LiteralText(finalSkinurl).styled(style -> style
                                     .withUnderline(true)
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("Click to open the link!")))
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("Click to open the link!")))
                                     .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, finalSkinurl))
                             );
-                            player.sendMessage(Text.translatable("command.getskin.success", PlayerName, skinText));
+                            player.sendMessage(new TranslatableText("command.getskin.success", PlayerName, skinText), false);
                         });
                     });
 
 
         } else {
-            player.sendMessage(Text.translatable("command.all.invalid.uuid"));
+            player.sendMessage(new TranslatableText("command.all.invalid.uuid"), false);
         }
         PlayerName = null;
         isUsingPlayerName = false;
@@ -130,10 +126,10 @@ public class getskin {
                             isUsingPlayerName = true;
                             getSkinsUUID(source, uuid);
                         } catch (Exception e) {
-                            source.getPlayer().sendMessage(Text.translatable("command.all.error"));
+                            source.getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                         }
                     } else{
-                        source.getPlayer().sendMessage(Text.translatable("command.all.invalid.name"));
+                        source.getPlayer().sendMessage(new TranslatableText("command.all.invalid.name"), false);
                     }
                 }));
         return Command.SINGLE_SUCCESS;

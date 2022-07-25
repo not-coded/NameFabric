@@ -1,13 +1,12 @@
 package net.notcoded.namefabric.utilities;
 
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import java.net.http.HttpClient;
 import java.util.Base64;
 
 public class Utilities {
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36";
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final int DURATION = 5; // seconds
 

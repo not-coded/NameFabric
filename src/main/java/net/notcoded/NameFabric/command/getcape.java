@@ -4,10 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.notcoded.namefabric.utilities.Utilities;
 
 import java.net.URI;
@@ -44,14 +44,14 @@ public class getcape {
                                 try {
                                     return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.translatable("command.all.error"));
+                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.translatable("command.all.error"));
+                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -110,7 +110,7 @@ public class getcape {
                                     capeurl = new String(Utilities.Decode64(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
                                 }
                             } catch (Exception e) {
-                                player.sendMessage(Text.translatable("command.all.error"));
+                                player.sendMessage(new TranslatableText("command.all.error"), false);
                             }
                             try{
                                 if(capeurl != null && !capeurl.equals("")){
@@ -121,16 +121,16 @@ public class getcape {
                             }
 
                             try {
-                                player.sendMessage(Text.translatable("command.getcape.success", PlayerName, IdentifyCape(source, capeurl, PlayerName)));
+                                player.sendMessage(new TranslatableText("command.getcape.success", PlayerName, IdentifyCape(source, capeurl, PlayerName)), false);
                             } catch (Exception e) {
-                                player.sendMessage(Text.translatable("command.getcape.success", PlayerName, "No"));
+                                player.sendMessage(new TranslatableText("command.getcape.success", PlayerName, "No"), false);
                             }
                         });
                     });
 
 
         } else {
-            player.sendMessage(Text.translatable("command.all.invalid.uuid"));
+            player.sendMessage(new TranslatableText("command.all.invalid.uuid"), false);
         }
         PlayerName = null;
         isUsingPlayerName = false;
@@ -159,10 +159,10 @@ public class getcape {
                             isUsingPlayerName = true;
                             getCapesUUID(source, uuid);
                         } catch (Exception e) {
-                            source.getPlayer().sendMessage(Text.translatable("command.all.error"));
+                            source.getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
                         }
                     } else{
-                        source.getPlayer().sendMessage(Text.translatable("command.all.invalid.name"));
+                        source.getPlayer().sendMessage(new TranslatableText("command.all.invalid.name"), false);
                     }
                 }));
         return Command.SINGLE_SUCCESS;

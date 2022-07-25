@@ -9,8 +9,9 @@
     "NotCoded"
   ],
   "contact": {
-    "homepage": "https://notcoded.cf/namefabric",
-    "sources": "https://github.com/not-coded/NameFabric"
+    "homepage": "https://modrinth.com/mod/namefabric",
+    "sources": "https://github.com/not-coded/NameFabric",
+    "issues": "https://github.com/not-coded/NameFabric/issues"
   },
 
   "license": "LGPL-2.1",
@@ -29,7 +30,7 @@
   "depends": {
     "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": "1.19.x",
+    "minecraft": "1.18.x",
     "java": ">=11"
   },
   "suggests": {
