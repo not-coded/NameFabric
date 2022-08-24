@@ -24,10 +24,8 @@ public class getskin {
 
     private static String PlayerName;
     private static final HttpClient httpClient = HttpClient.newHttpClient();
-    private static final int DURATION = 5; // seconds
+    private static final int DURATION = 5;
     private static boolean isUsingPlayerName = false;
-
-    private static boolean isSlim = false;
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("getskin")
                 .then(ClientCommandManager.argument("player/uuid", string())

@@ -1,54 +1,12 @@
 package net.notcoded.namefabric.utilities;
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import java.net.http.HttpClient;
 import java.util.Base64;
 
 public class Utilities {
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-    private static final int DURATION = 5; // seconds
 
     public static byte[] Decode64(String base64){
         return(Base64.getDecoder().decode(base64));
         // new String(base64)
-    }
-
-    public static String getPlayerName(FabricClientCommandSource source, String uuid) {
-        if (source.getClient().isInSingleplayer()) {
-            ServerPlayerEntity playerEntity = source.getClient().getServer().getPlayerManager().getPlayer(uuid);
-            if (playerEntity == null) {
-                return(uuid);
-            } else {
-                return(playerEntity.getEntityName());
-            }
-        } else {
-            PlayerListEntry playerListEntry = source.getClient().getNetworkHandler().getPlayerListEntry(uuid);
-            if (playerListEntry == null) {
-                return(uuid);
-            } else {
-                return(playerListEntry.getProfile().getName());
-            }
-        }
-    }
-
-    public static String getPlayerUUID(FabricClientCommandSource source, String name) {
-        if (source.getClient().isInSingleplayer()) {
-            ServerPlayerEntity playerEntity = source.getClient().getServer().getPlayerManager().getPlayer(name);
-            if (playerEntity == null) {
-                return(name);
-            } else {
-                return(playerEntity.getUuidAsString());
-            }
-        } else {
-            PlayerListEntry playerListEntry = source.getClient().getNetworkHandler().getPlayerListEntry(name);
-            if (playerListEntry == null) {
-                return(name);
-            } else {
-                return(playerListEntry.getProfile().getId().toString());
-            }
-        }
     }
 
     public static byte[] UrlDecode64(String base64){
