@@ -1,7 +1,7 @@
 # NameFabric
 
 <img src="https://img.shields.io/badge/LOADER-FABRIC-lightgrey?style=for-the-badge">
-<img src="https://img.shields.io/badge/MINECRAFT-1.19%20%7C%201.18.2-lightgrey?style=for-the-badge">
+<img src="https://img.shields.io/badge/MINECRAFT-1.19%20%7C%201.18-lightgrey?style=for-the-badge">
 <img src="https://img.shields.io/badge/CLIENT-SIDE-lightgrey?style=for-the-badge">
 
 ---------------------------------------
