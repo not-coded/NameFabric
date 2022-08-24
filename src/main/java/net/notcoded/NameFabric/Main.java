@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 public class Main implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("NameFabric");
-	public static final String PREFIX = "§8[§7NameFabric§8] ";
 
 	@Override
 	public void onInitialize() {

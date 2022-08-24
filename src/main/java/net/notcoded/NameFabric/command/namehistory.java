@@ -32,7 +32,6 @@ public class namehistory {
     private static final Map<String, List<String>> cacheByUuid = new HashMap<>();
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final int DURATION = 5; // seconds
-    // private static String PlayerName;
     private static boolean isUsingPlayerName = false;
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("namehistory")
@@ -62,6 +61,7 @@ public class namehistory {
     private static int getNamesUUID(FabricClientCommandSource source, String uuid) {
         ClientPlayerEntity client = source.getPlayer();
         if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName){
+            isUsingPlayerName = false;
             HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.mojang.com/user/profiles/" + uuid + "/names"))
                     .timeout(Duration.ofSeconds(DURATION))
                     .GET()
@@ -83,7 +83,6 @@ public class namehistory {
                         }
                     }));
         } else{
-            isUsingPlayerName = false;
             client.sendMessage(Text.translatable("command.all.invalid.uuid"));
             return Command.SINGLE_SUCCESS;
         }

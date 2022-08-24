@@ -25,7 +25,6 @@ import static net.minecraft.command.CommandSource.suggestMatching;
 public class getuuid {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final int DURATION = 5; // seconds
-    // private static String PlayerName;
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("getuuid")
                 .then(ClientCommandManager.argument("player/uuid", string())

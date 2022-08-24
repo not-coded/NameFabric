@@ -10,10 +10,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
-import net.notcoded.namefabric.Main;
 import net.notcoded.namefabric.utilities.Utilities;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -30,8 +28,6 @@ public class getskin {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final int DURATION = 5; // seconds
     private static boolean isUsingPlayerName = false;
-
-    private static boolean isSlim = false;
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("getskin")
                 .then(ClientCommandManager.argument("player/uuid", string())

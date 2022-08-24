@@ -57,27 +57,7 @@ public class getcape {
                             }
                         })));
     }
-
-    /*
-
-    make HTTP.sendHTTP work (namefabric 1.0.1)
-
-    private static boolean isOptifine(FabricClientCommandSource source, String username) {
-        if(HTTP.sendHTTP(source, "https://s.optifine.net/capes/" + username + ".png") != null){
-            return true;
-        }
-        return false;
-    }
-
-     */
-
-    private static String IdentifyCape(FabricClientCommandSource source, String url, String user) {
-        /*
-        if(isOptifine(source, user)){
-            return "Optifine";
-        }
-
-         */
+    private static String IdentifyCape(String url) {
         for (int i = 0; i <= capeLinks.length - 1; ++i){
             if(url.equals(capeLinks[i])){
                 return capes[i];
@@ -117,11 +97,11 @@ public class getcape {
                                     JsonElement result2 = JsonParser.parseString(capeurl);
                                     capeurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("CAPE").getAsJsonObject().get("url").getAsString();
                                 }
-                            } catch (Exception e){
+                            } catch (Exception ignored){
                             }
 
                             try {
-                                player.sendMessage(Text.translatable("command.getcape.success", PlayerName, IdentifyCape(source, capeurl, PlayerName)));
+                                player.sendMessage(Text.translatable("command.getcape.success", PlayerName, IdentifyCape(capeurl)));
                             } catch (Exception e) {
                                 player.sendMessage(Text.translatable("command.getcape.success", PlayerName, "No"));
                             }
