@@ -4,34 +4,31 @@
   "version": "${version}",
 
   "name": "NameFabric",
-  "description": "NameFabric, the mod that shows you public player data like past usernames, current skin, and more using the Mojang's API.",
+  "description": "NameFabric, the mod that shows you public player data like past usernames, current skin, and more using LabyNet's and Mojang's API.",
   "authors": [
     "NotCoded"
   ],
   "contact": {
-    "homepage": "https://notcoded.cf/namefabric",
+    "homepage": "https://modrinth.com/mod/namefabric",
     "sources": "https://github.com/not-coded/NameFabric"
   },
 
   "license": "LGPL-2.1",
   "icon": "assets/namefabric/icon.png",
 
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "net.notcoded.namefabric.Main"
     ]
   },
-  "mixins": [
-    "namefabric.mixins.json"
-  ],
 
   "depends": {
     "fabricloader": ">=0.13.3",
-    "fabric": "*",
-    "minecraft": "1.19.x",
+    "fabric-command-api-v2": "*",
+    "fabric-api-base": "*",
+    "fabric-resource-loader-v0": "*",
+    "minecraft": "1.19",
     "java": ">=11"
-  },
-  "suggests": {
   }
 }

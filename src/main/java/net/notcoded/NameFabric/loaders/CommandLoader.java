@@ -7,9 +7,9 @@ import net.notcoded.namefabric.command.*;
 
 public class CommandLoader {
     public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        namehistory.register(dispatcher);
-        getskin.register(dispatcher);
-        getcape.register(dispatcher);
-        getuuid.register(dispatcher);
+        GetSkinCommand.register(dispatcher);
+        GetCapeCommand.register(dispatcher);
+        GetUuidCommand.register(dispatcher);
+        NameHistoryCommand.register(dispatcher);
     }
 }
