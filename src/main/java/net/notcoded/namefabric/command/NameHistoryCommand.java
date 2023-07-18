@@ -2,13 +2,16 @@ package net.notcoded.namefabric.command;
 
 import com.google.gson.*;
 import com.mojang.brigadier.Command;
+
+
 import com.mojang.brigadier.CommandDispatcher;
-
-
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.notcoded.namefabric.Main;
+import net.notcoded.namefabric.utils.MinecraftAPI;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,15 +27,14 @@ import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
-public class namehistory {
-
-    // Variables and fetchNameHistory function are copied/modified from https://github.com/Earthcomputer/clientcommands/blob/fabric/src/main/java/net/earthcomputer/clientcommands/command/PlayerInfoCommand.java
-    // Credit to EarthComputer, xpple and haykam821 for writing this amazing code!
+public class NameHistoryCommand {
     private static final Map<String, List<String>> cacheByName = new HashMap<>();
     private static final Map<String, List<String>> cacheByUuid = new HashMap<>();
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-    private static final int DURATION = 5;
     private static boolean isUsingPlayerName = false;
+
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final int DURATION = 5; // seconds
+
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("namehistory")
                 .then(ClientCommandManager.argument("player/uuid", string())
@@ -42,14 +44,14 @@ public class namehistory {
                                 try {
                                     return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception ignored) {
-                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
+                                    ctx.getSource().sendError(new TranslatableText("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception ignored) {
-                                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
+                                    } catch (JsonIOException e) {
+                                    ctx.getSource().sendError(new TranslatableText("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -59,10 +61,9 @@ public class namehistory {
 
 
     private static int getNamesUUID(FabricClientCommandSource source, String uuid) {
-        ClientPlayerEntity client = source.getPlayer();
-        if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName){
+        if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName){
             isUsingPlayerName = false;
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.mojang.com/user/profiles/" + uuid + "/names"))
+            HttpRequest request = HttpRequest.newBuilder(URI.create(String.format("https://laby.net/api/user/%s/get-names", uuid)))
                     .timeout(Duration.ofSeconds(DURATION))
                     .GET()
                     .build();
@@ -77,13 +78,13 @@ public class namehistory {
                             String player = names.get(names.size() - 1);
                             cacheByName.put(player, names);
                             cacheByUuid.put(uuid, names);
-                            client.sendMessage(new TranslatableText("command.namehistory.success", player, String.join(", ", names)), false);
+                            source.sendFeedback(new TranslatableText("command.namehistory.success", player, String.join(", ", names)));
                         } else {
-                            client.sendMessage(new TranslatableText("command.all.error"), false);
+                            source.sendError(new TranslatableText("command.all.error"));
                         }
                     }));
         } else{
-            client.sendMessage(new TranslatableText("command.all.invalid.uuid"), false);
+            source.sendError(new TranslatableText("command.all.invalid.uuid"));
             return Command.SINGLE_SUCCESS;
         }
         return Command.SINGLE_SUCCESS;
@@ -91,32 +92,17 @@ public class namehistory {
 
 
     public static int getNamesPlayer(FabricClientCommandSource source, String name){
-        HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.mojang.com/users/profiles/minecraft/" + name))
-                .timeout(Duration.ofSeconds(DURATION))
-                .GET()
-                .build();
-        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(response -> source.getClient().send(() -> {
-                    JsonElement result = JsonParser.parseString(response);
-                    String uuid = null;
-                    try{
-                        if(result.getAsJsonObject().get("id").getAsString() != null){
-                            uuid = result.getAsJsonObject().get("id").getAsString();
-                        }
-                    } catch (Exception ignored) {
-                    }
-                    if(uuid != null && !uuid.equals("")){
-                        try {
-                            isUsingPlayerName = true;
-                            getNamesUUID(source, uuid);
-                        } catch (Exception e) {
-                            source.getPlayer().sendMessage(new TranslatableText("command.all.error"), false);
-                        }
-                    } else{
-                        source.getPlayer().sendMessage(new TranslatableText("command.all.invalid.name"), false);
-                    }
-                }));
+        String uuid = MinecraftAPI.getUUID(name);
+        if(uuid != null && uuid.trim().length() != 0){
+            try {
+                isUsingPlayerName = true;
+                getNamesUUID(source, uuid);
+            } catch (Exception ignored) {
+                source.sendError(new TranslatableText("command.all.error"));
+            }
+        } else{
+            source.sendError(new TranslatableText("command.all.invalid.name"));
+        }
         return Command.SINGLE_SUCCESS;
     }
 }
