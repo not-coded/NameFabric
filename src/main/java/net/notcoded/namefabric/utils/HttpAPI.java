@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class HttpAPI {
 
-    public static String userAgent = "Mozilla/5.0 (compatible; namefabric/1.0.2; +https://github.com/not-coded/NameFabric)";
+    public static String userAgent = "Mozilla/5.0 (compatible; namefabric; +https://github.com/not-coded/NameFabric)";
 
     public static String get(@NotNull String url) {
         try {
