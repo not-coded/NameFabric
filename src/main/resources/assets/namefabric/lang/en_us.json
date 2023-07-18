@@ -10,5 +10,8 @@
 
   "command.getcape.success": "The current cape of %s is the %s cape.",
 
-  "command.namehistory.success": "The past usernames of %s are: %s"
+  "command.namehistory.success": "The past usernames of %s are: %s",
+
+  "click.open.link": "Click to open the link!",
+  "click.copy.uuid": "Click to copy the uuid!"
 }

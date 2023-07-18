@@ -9,7 +9,6 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.notcoded.namefabric.Main;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,14 +28,14 @@ public class GetUuidCommand {
                                 try {
                                     return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -49,14 +48,14 @@ public class GetUuidCommand {
                                 try {
                                     return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendFeedback(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendFeedback(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -70,15 +69,15 @@ public class GetUuidCommand {
             try {
                 Text uuidText = Text.literal(uuid).styled(style -> style
                         .withUnderline(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("Click to copy the uuid!")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("click.copy.uuid")))
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
                 );
                 source.sendFeedback(Text.translatable("command.getuuid.uuid.success", uuidText, name));
             } catch (Exception e) {
-                source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                source.sendError(Text.translatable("command.all.error"));
             }
         } else {
-            source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+            source.sendError(Text.translatable("command.all.error"));
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -95,10 +94,10 @@ public class GetUuidCommand {
                 source.sendFeedback(Text.translatable("command.getuuid.name.success", name, uuidText));
 
             } catch (Exception e) {
-                source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                source.sendError(Text.translatable("command.all.error"));
             }
         } else {
-            source.sendError(Text.literal(Main.prefix + Text.translatable( "command.all.invalid.name").getString()));
+            source.sendError(Text.translatable("command.all.invalid.name"));
         }
         return Command.SINGLE_SUCCESS;
     }

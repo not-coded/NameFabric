@@ -6,9 +6,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.ClientPlayerEntity;
+
 import net.minecraft.text.Text;
-import net.notcoded.namefabric.Main;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,14 +39,14 @@ public class GetCapeCommand {
                                 try {
                                     return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -82,7 +81,7 @@ public class GetCapeCommand {
                                 capeurl = new String(Base64.getDecoder().decode(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
                             }
                         } catch (Exception e) {
-                            source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                            source.sendError(Text.translatable("command.all.error"));
                         }
                         try{
                             if(capeurl.trim().length() != 0){
@@ -113,10 +112,10 @@ public class GetCapeCommand {
                 isUsingPlayerName = true;
                 getCapesUUID(source, uuid);
             } catch (Exception e) {
-                source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                source.sendError(Text.translatable("command.all.error"));
             }
         } else {
-            source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.invalid.name").getString()));
+            source.sendError(Text.translatable("command.all.invalid.name"));
         }
         return Command.SINGLE_SUCCESS;
     }

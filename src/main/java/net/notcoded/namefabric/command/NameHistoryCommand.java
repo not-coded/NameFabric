@@ -5,10 +5,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.notcoded.namefabric.Main;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 
 import java.net.URI;
@@ -42,14 +40,14 @@ public class NameHistoryCommand {
                                 try {
                                     return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception ignored) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                     } catch (JsonIOException e) {
-                                    ctx.getSource().getPlayer().sendMessage(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -78,11 +76,11 @@ public class NameHistoryCommand {
                             cacheByUuid.put(uuid, names);
                             source.sendFeedback(Text.translatable("command.namehistory.success", player, String.join(", ", names)));
                         } else {
-                            source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                            source.sendError(Text.translatable("command.all.error"));
                         }
                     }));
         } else{
-            source.getPlayer().sendMessage(Text.literal(Main.prefix + Text.translatable("command.all.invalid.uuid").getString()));
+            source.sendError(Text.translatable("command.all.invalid.uuid"));
             return Command.SINGLE_SUCCESS;
         }
         return Command.SINGLE_SUCCESS;
@@ -96,10 +94,10 @@ public class NameHistoryCommand {
                 isUsingPlayerName = true;
                 getNamesUUID(source, uuid);
             } catch (Exception ignored) {
-                source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.error").getString()));
+                source.sendError(Text.translatable("command.all.error"));
             }
         } else{
-            source.sendError(Text.literal(Main.prefix + Text.translatable("command.all.invalid.name").getString()));
+            source.sendError(Text.translatable("command.all.invalid.name"));
         }
         return Command.SINGLE_SUCCESS;
     }
