@@ -1,10 +1,12 @@
 # NameFabric
 
-NameFabric, the mod that shows you public player data like past usernames, current skin, and more using the Mojang's API.
+![Fabric](https://raw.githubusercontent.com/intergrav/devins-badges/1a0c6742ac5929b4597b417a74a124a30cf3461f/assets/cozy/supported/fabric_vector.svg) ![Minecraft](https://notcoded.needs.rest/r/badge_minecraft_1.16+.svg)
+---------------------------------------
 
-We have a discord now! **[Discord](https://discord.gg/bChCtfB9eS)**
+NameFabric, the mod that shows you public player data like past usernames, current skin, and more using LabyNet's and Mojang's API.
 
-**Disclaimer**: This **REQUIRES** [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api).
+## Download
+[Modrinth](https://modrinth.com/mod/namefabric) - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/namefabric/) - [GitHub](https://github.com/not-coded/NameFabric/releases/)
 
 ## Features
 - /namehistory | Gets the past names of the specified player
@@ -14,9 +16,3 @@ We have a discord now! **[Discord](https://discord.gg/bChCtfB9eS)**
 
 ## Known Issues:
 - If you put anything with the same length as 32 or 36 it will cause an error in the commands.
-- Commands sometimes say "Invalid name/uuid", even though it is valid, and "An error occurred".
-- Commands sometimes cause random errors that aren't shown in chat.
-
-## Credits:
-- [NameMC](https://namemc.com/capes) - Capes List
-- EarthComputer, xpple and haykam821 (PlayerInfoCommand - Variables, fetchNameHistory function and the HTTP request) - https://github.com/Earthcomputer/clientcommands/
