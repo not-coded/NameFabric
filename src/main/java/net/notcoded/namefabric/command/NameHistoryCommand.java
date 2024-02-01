@@ -89,7 +89,7 @@ public class NameHistoryCommand {
 
     public static int getNamesPlayer(FabricClientCommandSource source, String name){
         String uuid = MinecraftAPI.getUUID(name);
-        if(uuid != null && uuid.trim().length() != 0){
+        if(uuid != null && !uuid.trim().isEmpty()){
             try {
                 isUsingPlayerName = true;
                 getNamesUUID(source, uuid);

@@ -56,7 +56,7 @@ public class GetCapeCommand {
         String cape;
         for (int i = 0; i < capes.size(); i++){
             cape = capes.get(url);
-            if(cape != null && cape.trim().length() != 0) return cape;
+            if(cape != null && !cape.trim().isEmpty()) return cape;
         }
         return "No";
     }
@@ -84,7 +84,7 @@ public class GetCapeCommand {
                             source.sendError(Text.translatable("command.all.error"));
                         }
                         try{
-                            if(capeurl.trim().length() != 0){
+                            if(!capeurl.trim().isEmpty()){
                                 JsonElement result2 = JsonParser.parseString(capeurl);
                                 capeurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("CAPE").getAsJsonObject().get("url").getAsString();
                             }
@@ -145,6 +145,7 @@ public class GetCapeCommand {
         capes.put("http://textures.minecraft.net/texture/2e002d5e1758e79ba51d08d92a0f3a95119f2f435ae7704916507b6c565a7da8", "Spade");
         capes.put("http://textures.minecraft.net/texture/ca29f5dd9e94fb1748203b92e36b66fda80750c87ebc18d6eafdb0e28cc1d05f", "Translator (Japanese)");
         capes.put("http://textures.minecraft.net/texture/f9a76537647989f9a0b6d001e320dac591c359e9e61a31f4ce11c88f207f0ad4", "Vanilla");
+        capes.put("http://textures.minecraft.net/texture/afd553b39358a24edfe3b8a9a939fa5fa4faa4d9a9c3d6af8eafb377fa05c2bb", "Cherry Blossom");
     }
 }
 

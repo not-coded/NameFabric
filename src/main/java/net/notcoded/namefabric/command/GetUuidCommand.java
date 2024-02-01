@@ -65,7 +65,7 @@ public class GetUuidCommand {
 
     private static int getNamesUUID(FabricClientCommandSource source, @NotNull String uuid) {
         String name = MinecraftAPI.getName(uuid);
-        if (name != null && name.trim().length() != 0) {
+        if (name != null && !name.trim().isEmpty()) {
             try {
                 Text uuidText = Text.literal(uuid).styled(style -> style
                         .withUnderline(true)
@@ -84,11 +84,11 @@ public class GetUuidCommand {
 
     public static int getUuidName(FabricClientCommandSource source, String name) {
         String uuid = MinecraftAPI.getUUID(name);
-        if (uuid != null && uuid.trim().length() != 0) {
+        if (uuid != null && !uuid.trim().isEmpty()) {
             try {
                 Text uuidText = Text.literal(uuid).styled(style -> style
                         .withUnderline(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("Click to copy the uuid!")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to copy the uuid!")))
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
                 );
                 source.sendFeedback(Text.translatable("command.getuuid.name.success", name, uuidText));

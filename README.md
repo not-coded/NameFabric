@@ -1,6 +1,6 @@
 # NameFabric
 
-![Fabric](https://raw.githubusercontent.com/intergrav/devins-badges/1a0c6742ac5929b4597b417a74a124a30cf3461f/assets/cozy/supported/fabric_vector.svg) ![Minecraft](https://notcoded.needs.rest/r/badge_minecraft_1.16+.svg)
+![Fabric](https://raw.githubusercontent.com/intergrav/devins-badges/1a0c6742ac5929b4597b417a74a124a30cf3461f/assets/cozy/supported/fabric_vector.svg) ![Minecraft](https://notcoded.needs.rest/r/badge_minecraft_1.16plus.svg)
 ---------------------------------------
 
 NameFabric, the mod that shows you public player data like past usernames, current skin, and more using LabyNet's and Mojang's API.

@@ -77,7 +77,7 @@ public class GetSkinCommand {
                                 source.sendError(Text.translatable("command.all.error"));
                             }
                             try{
-                                if(skinurl != null && skinurl.trim().length() != 0){
+                                if(skinurl != null && !skinurl.trim().isEmpty()){
                                     JsonElement result2 = JsonParser.parseString(skinurl);
                                     skinurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").getAsString();
                                 }
@@ -88,7 +88,7 @@ public class GetSkinCommand {
                             String finalSkinurl = skinurl;
                             Text skinText = Text.literal(finalSkinurl).styled(style -> style
                                     .withUnderline(true)
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("Click to open the link!")))
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to open the link!")))
                                     .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, finalSkinurl))
                             );
                             source.sendFeedback(Text.translatable("command.getskin.success", PlayerName, skinText));
@@ -105,7 +105,7 @@ public class GetSkinCommand {
     }
     public static int getSkinsPlayer(FabricClientCommandSource source, String name) {
         String uuid = MinecraftAPI.getUUID(name);
-        if(uuid != null && uuid.trim().length() != 0){
+        if(uuid != null && !uuid.trim().isEmpty()){
             try {
                 PlayerName = name;
                 isUsingPlayerName = true;

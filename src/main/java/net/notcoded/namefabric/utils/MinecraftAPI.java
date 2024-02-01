@@ -11,12 +11,12 @@ public class MinecraftAPI {
             response = HttpAPI.get(String.format("https://api.mojang.com/users/profiles/minecraft/%s", name));
         } catch(Exception ignored) { }
 
-        if(response != null && response.trim().length() != 0)  {
+        if(response != null && !response.trim().isEmpty())  {
             JsonElement result = JsonParser.parseString(response);
 
             String uuid = result.getAsJsonObject().get("id").getAsString();
 
-            if (uuid != null && uuid.trim().length() != 0 && (uuid.length() == 32 || uuid.length() == 36)) {
+            if (uuid != null && !uuid.trim().isEmpty() && (uuid.length() == 32 || uuid.length() == 36)) {
                 return uuid;
             }
         }
@@ -35,7 +35,7 @@ public class MinecraftAPI {
 
             String name = result.getAsJsonObject().get("name").getAsString();
 
-            if (name != null && name.trim().length() != 0) {
+            if (name != null && !name.trim().isEmpty()) {
                 return name;
             }
         }
