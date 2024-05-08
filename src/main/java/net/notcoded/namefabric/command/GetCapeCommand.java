@@ -27,7 +27,7 @@ public class GetCapeCommand {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final int DURATION = 5; // seconds
 
-    private static String PlayerName;
+    private static String playerName;
     private static boolean isUsingPlayerName = false;
     public static HashMap<String, String> capes = new HashMap<>();
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -74,7 +74,7 @@ public class GetCapeCommand {
                         JsonElement result = JsonParser.parseString(response);
                         if(!isUsingPlayerName){
                             JsonElement result1 = JsonParser.parseString(response);
-                            PlayerName = result1.getAsJsonObject().get("name").getAsString();
+                            playerName = result1.getAsJsonObject().get("name").getAsString();
                         }
                         try {
                             if (result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString() != null) {
@@ -91,14 +91,14 @@ public class GetCapeCommand {
                         } catch (Exception ignored){
                         }
 
-                        source.sendFeedback(Text.translatable("command.getcape.success", PlayerName, identifyCape(capeurl)));
+                        source.sendFeedback(Text.translatable("command.getcape.success", playerName, identifyCape(capeurl)));
                     }));
 
 
         } else {
             source.sendError(Text.translatable("command.all.invalid.uuid"));
         }
-        PlayerName = null;
+        playerName = null;
         isUsingPlayerName = false;
         return Command.SINGLE_SUCCESS;
     }
@@ -108,7 +108,7 @@ public class GetCapeCommand {
 
         if (uuid != null && (uuid.length() == 32 || uuid.length() == 36)) {
             try {
-                PlayerName = name;
+                playerName = name;
                 isUsingPlayerName = true;
                 getCapesUUID(source, uuid);
             } catch (Exception e) {

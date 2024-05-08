@@ -6,11 +6,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
-import net.notcoded.namefabric.Main;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 
 import java.net.URI;
@@ -26,7 +24,7 @@ import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class GetSkinCommand {
 
-    private static String PlayerName;
+    private static String playerName;
     private static boolean isUsingPlayerName = false;
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
@@ -67,7 +65,7 @@ public class GetSkinCommand {
                             JsonElement result = JsonParser.parseString(response);
                             if(!isUsingPlayerName){
                                 JsonElement result1 = JsonParser.parseString(response);
-                                PlayerName = result1.getAsJsonObject().get("name").getAsString();
+                                playerName = result1.getAsJsonObject().get("name").getAsString();
                             }
                             try {
                                 if (result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString() != null) {
@@ -75,6 +73,7 @@ public class GetSkinCommand {
                                 }
                             } catch (Exception e) {
                                 source.sendError(Text.translatable("command.all.error"));
+                                return;
                             }
                             try{
                                 if(skinurl != null && !skinurl.trim().isEmpty()){
@@ -83,15 +82,22 @@ public class GetSkinCommand {
                                 }
                             } catch (Exception e){
                                 source.sendError(Text.translatable("command.all.error"));
+                                return;
                             }
 
                             String finalSkinurl = skinurl;
+
+                            if(finalSkinurl == null) {
+                                source.sendError(Text.translatable("command.all.error"));
+                                return;
+                            }
+
                             Text skinText = Text.literal(finalSkinurl).styled(style -> style
                                     .withUnderline(true)
                                     .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to open the link!")))
                                     .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, finalSkinurl))
                             );
-                            source.sendFeedback(Text.translatable("command.getskin.success", PlayerName, skinText));
+                            source.sendFeedback(Text.translatable("command.getskin.success", playerName, skinText));
                         });
                     });
 
@@ -99,7 +105,7 @@ public class GetSkinCommand {
         } else {
             source.sendError(Text.translatable("command.all.invalid.uuid"));
         }
-        PlayerName = null;
+        playerName = null;
         isUsingPlayerName = false;
         return Command.SINGLE_SUCCESS;
     }
@@ -107,7 +113,7 @@ public class GetSkinCommand {
         String uuid = MinecraftAPI.getUUID(name);
         if(uuid != null && !uuid.trim().isEmpty()){
             try {
-                PlayerName = name;
+                playerName = name;
                 isUsingPlayerName = true;
                 getSkinsUUID(source, uuid);
             } catch (Exception e) {

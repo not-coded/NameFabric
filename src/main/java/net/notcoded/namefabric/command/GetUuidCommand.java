@@ -1,8 +1,8 @@
 package net.notcoded.namefabric.command;
 
-
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
 import net.minecraft.text.ClickEvent;
@@ -18,50 +18,35 @@ import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class GetUuidCommand {
 
-
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("getname")
                 .then(ClientCommandManager.argument("player/uuid", string())
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
-                        .executes(ctx -> {
-                            if (getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36) {
-                                try {
-                                    return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
-                                    return Command.SINGLE_SUCCESS;
-                                }
-                            } else {
-                                try {
-                                    return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
-                                    return Command.SINGLE_SUCCESS;
-                                }
-                            }
-                        })));
+                        .executes(GetUuidCommand::execute)));
+
         dispatcher.register(ClientCommandManager.literal("getuuid")
                 .then(ClientCommandManager.argument("player/uuid", string())
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
-                        .executes(ctx -> {
-                            if (getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36) {
-                                try {
-                                    return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
-                                    return Command.SINGLE_SUCCESS;
-                                }
-                            } else {
-                                try {
-                                    return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
-                                    return Command.SINGLE_SUCCESS;
-                                }
-                            }
-                        })));
+                        .executes(GetUuidCommand::execute)));
     }
 
+    private static int execute(CommandContext<FabricClientCommandSource> ctx) {
+        if (getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36) {
+            try {
+                return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
+            } catch (Exception e) {
+                ctx.getSource().sendError(Text.translatable("command.all.error"));
+                return Command.SINGLE_SUCCESS;
+            }
+        } else {
+            try {
+                return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
+            } catch (Exception e) {
+                ctx.getSource().sendError(Text.translatable("command.all.error"));
+                return Command.SINGLE_SUCCESS;
+            }
+        }
+    }
 
     private static int getNamesUUID(FabricClientCommandSource source, @NotNull String uuid) {
         String name = MinecraftAPI.getName(uuid);

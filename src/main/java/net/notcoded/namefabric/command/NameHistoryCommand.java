@@ -1,12 +1,14 @@
 package net.notcoded.namefabric.command;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-
-import net.minecraft.text.Text;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.text.Text;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 
 import java.net.URI;
@@ -15,17 +17,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class NameHistoryCommand {
-    private static final Map<String, List<String>> cacheByName = new HashMap<>();
-    private static final Map<String, List<String>> cacheByUuid = new HashMap<>();
     private static boolean isUsingPlayerName = false;
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
@@ -72,8 +70,6 @@ public class NameHistoryCommand {
                             List<String> names = new ArrayList<>();
                             array.forEach(name -> names.add(name.getAsJsonObject().get("name").getAsString()));
                             String player = names.get(names.size() - 1);
-                            cacheByName.put(player, names);
-                            cacheByUuid.put(uuid, names);
                             source.sendFeedback(Text.translatable("command.namehistory.success", player, String.join(", ", names)));
                         } else {
                             source.sendError(Text.translatable("command.all.error"));

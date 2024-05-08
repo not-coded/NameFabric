@@ -3,8 +3,18 @@ package net.notcoded.namefabric.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import java.util.HashMap;
+
 public class MinecraftAPI {
+
+    public static HashMap<String, String> cachedNames = new HashMap<>();
+
+    public static HashMap<String, String> cachedUUIDs = new HashMap<>();
+
     public static String getUUID(String name) {
+
+        if(cachedUUIDs.get(name) != null) return cachedUUIDs.get(name);
+
         String response = null;
 
         try {
@@ -17,6 +27,7 @@ public class MinecraftAPI {
             String uuid = result.getAsJsonObject().get("id").getAsString();
 
             if (uuid != null && !uuid.trim().isEmpty() && (uuid.length() == 32 || uuid.length() == 36)) {
+                cachedNames.put(uuid, name);
                 return uuid;
             }
         }
@@ -25,6 +36,9 @@ public class MinecraftAPI {
     }
 
     public static String getName(String uuid){
+
+        if(cachedNames.get(uuid) != null) return cachedNames.get(uuid);
+
         String response = null;
 
         try {
@@ -36,6 +50,7 @@ public class MinecraftAPI {
             String name = result.getAsJsonObject().get("name").getAsString();
 
             if (name != null && !name.trim().isEmpty()) {
+                cachedUUIDs.put(name, uuid);
                 return name;
             }
         }
