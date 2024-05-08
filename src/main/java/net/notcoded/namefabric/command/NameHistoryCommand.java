@@ -6,18 +6,15 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.text.Text;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.text.TranslatableText;
+import net.notcoded.namefabric.utils.HttpAPI;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
@@ -25,9 +22,6 @@ import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class NameHistoryCommand {
     private static boolean isUsingPlayerName = false;
-
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-    private static final int DURATION = 5; // seconds
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("namehistory")
@@ -38,14 +32,14 @@ public class NameHistoryCommand {
                                 try {
                                     return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception ignored) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
+                                    ctx.getSource().sendError(new TranslatableText("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                     } catch (JsonIOException e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
+                                    ctx.getSource().sendError(new TranslatableText("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -55,28 +49,20 @@ public class NameHistoryCommand {
 
 
     private static int getNamesUUID(FabricClientCommandSource source, String uuid) {
-        if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName){
+        if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName) {
             isUsingPlayerName = false;
-            HttpRequest request = HttpRequest.newBuilder(URI.create(String.format("https://laby.net/api/user/%s/get-names", uuid)))
-                    .timeout(Duration.ofSeconds(DURATION))
-                    .GET()
-                    .build();
-            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenAccept(response -> source.getClient().send(() -> {
-                        JsonElement result = JsonParser.parseString(response);
-                        if (result.isJsonArray()) {
-                            JsonArray array = result.getAsJsonArray();
-                            List<String> names = new ArrayList<>();
-                            array.forEach(name -> names.add(name.getAsJsonObject().get("name").getAsString()));
-                            String player = names.get(names.size() - 1);
-                            source.sendFeedback(Text.translatable("command.namehistory.success", player, String.join(", ", names)));
-                        } else {
-                            source.sendError(Text.translatable("command.all.error"));
-                        }
-                    }));
+            JsonElement result = new JsonParser().parse(Objects.requireNonNull(HttpAPI.get(String.format("https://laby.net/api/user/%s/get-names", uuid))));
+            if (result.isJsonArray()) {
+                JsonArray array = result.getAsJsonArray();
+                List<String> names = new ArrayList<>();
+                array.forEach(name -> names.add(name.getAsJsonObject().get("name").getAsString()));
+                String player = names.get(names.size() - 1);
+                source.sendFeedback(new TranslatableText("command.namehistory.success", player, String.join(", ", names)));
+            } else {
+                source.sendError(new TranslatableText("command.all.error"));
+            }
         } else{
-            source.sendError(Text.translatable("command.all.invalid.uuid"));
+            source.sendError(new TranslatableText("command.all.invalid.uuid"));
             return Command.SINGLE_SUCCESS;
         }
         return Command.SINGLE_SUCCESS;
@@ -90,10 +76,10 @@ public class NameHistoryCommand {
                 isUsingPlayerName = true;
                 getNamesUUID(source, uuid);
             } catch (Exception ignored) {
-                source.sendError(Text.translatable("command.all.error"));
+                source.sendError(new TranslatableText("command.all.error"));
             }
         } else{
-            source.sendError(Text.translatable("command.all.invalid.name"));
+            source.sendError(new TranslatableText("command.all.invalid.name"));
         }
         return Command.SINGLE_SUCCESS;
     }

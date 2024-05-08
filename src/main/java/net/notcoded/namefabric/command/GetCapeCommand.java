@@ -4,29 +4,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-
-import net.minecraft.text.Text;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.text.TranslatableText;
+import net.notcoded.namefabric.utils.HttpAPI;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.CommandSource.suggestMatching;
 
 public class GetCapeCommand {
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-    private static final int DURATION = 5; // seconds
-
     private static String playerName;
     private static boolean isUsingPlayerName = false;
     public static HashMap<String, String> capes = new HashMap<>();
@@ -39,14 +32,14 @@ public class GetCapeCommand {
                                 try {
                                     return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
+                                    ctx.getSource().sendError(new TranslatableText("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             } else {
                                 try {
                                     return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
+                                    ctx.getSource().sendError(new TranslatableText("command.all.error"));
                                     return Command.SINGLE_SUCCESS;
                                 }
                             }
@@ -62,41 +55,29 @@ public class GetCapeCommand {
     }
 
     private static int getCapesUUID(@NotNull FabricClientCommandSource source, @NotNull String uuid) {
-        if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName){
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid))
-                    .timeout(Duration.ofSeconds(DURATION))
-                    .GET()
-                    .build();
-            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenAccept(response -> source.getClient().send(() -> {
-                        String capeurl = "";
-                        JsonElement result = JsonParser.parseString(response);
-                        if(!isUsingPlayerName){
-                            JsonElement result1 = JsonParser.parseString(response);
-                            playerName = result1.getAsJsonObject().get("name").getAsString();
-                        }
-                        try {
-                            if (result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString() != null) {
-                                capeurl = new String(Base64.getDecoder().decode(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
-                            }
-                        } catch (Exception e) {
-                            source.sendError(Text.translatable("command.all.error"));
-                        }
-                        try{
-                            if(!capeurl.trim().isEmpty()){
-                                JsonElement result2 = JsonParser.parseString(capeurl);
-                                capeurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("CAPE").getAsJsonObject().get("url").getAsString();
-                            }
-                        } catch (Exception ignored){
-                        }
+        if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName) {
+            String capeurl = "";
+            JsonElement result = new JsonParser().parse(Objects.requireNonNull(HttpAPI.get("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid)));
+            try {
+                if (!isUsingPlayerName) {
+                    playerName = result.getAsJsonObject().get("name").getAsString();
+                }
 
-                        source.sendFeedback(Text.translatable("command.getcape.success", playerName, identifyCape(capeurl)));
-                    }));
+                if (result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString() != null) {
+                    capeurl = new String(Base64.getDecoder().decode(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
+                }
 
+                if (!capeurl.trim().isEmpty()) {
+                    JsonElement result2 = new JsonParser().parse(capeurl);
+                    capeurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("CAPE").getAsJsonObject().get("url").getAsString();
+                }
+            } catch (Exception ignored) {
+                source.sendError(new TranslatableText("command.all.error"));
+            }
 
+            source.sendFeedback(new TranslatableText("command.getcape.success", playerName, identifyCape(capeurl)));
         } else {
-            source.sendError(Text.translatable("command.all.invalid.uuid"));
+            source.sendError(new TranslatableText("command.all.invalid.uuid"));
         }
         playerName = null;
         isUsingPlayerName = false;
@@ -112,10 +93,10 @@ public class GetCapeCommand {
                 isUsingPlayerName = true;
                 getCapesUUID(source, uuid);
             } catch (Exception e) {
-                source.sendError(Text.translatable("command.all.error"));
+                source.sendError(new TranslatableText("command.all.error"));
             }
         } else {
-            source.sendError(Text.translatable("command.all.invalid.name"));
+            source.sendError(new TranslatableText("command.all.invalid.name"));
         }
         return Command.SINGLE_SUCCESS;
     }

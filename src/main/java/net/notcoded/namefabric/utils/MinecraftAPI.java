@@ -22,7 +22,7 @@ public class MinecraftAPI {
         } catch(Exception ignored) { }
 
         if(response != null && !response.trim().isEmpty())  {
-            JsonElement result = JsonParser.parseString(response);
+            JsonElement result = new JsonParser().parse(response);
 
             String uuid = result.getAsJsonObject().get("id").getAsString();
 
@@ -45,7 +45,7 @@ public class MinecraftAPI {
             response = HttpAPI.get(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s", uuid));
         } catch(Exception ignored) { }
         if(response != null) {
-            JsonElement result = JsonParser.parseString(response);
+            JsonElement result = new JsonParser().parse(response);
 
             String name = result.getAsJsonObject().get("name").getAsString();
 

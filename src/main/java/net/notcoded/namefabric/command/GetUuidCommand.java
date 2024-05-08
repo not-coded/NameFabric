@@ -3,12 +3,9 @@ package net.notcoded.namefabric.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.text.*;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,14 +32,14 @@ public class GetUuidCommand {
             try {
                 return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
             } catch (Exception e) {
-                ctx.getSource().sendError(Text.translatable("command.all.error"));
+                ctx.getSource().sendError(new TranslatableText("command.all.error"));
                 return Command.SINGLE_SUCCESS;
             }
         } else {
             try {
                 return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
             } catch (Exception e) {
-                ctx.getSource().sendError(Text.translatable("command.all.error"));
+                ctx.getSource().sendError(new TranslatableText("command.all.error"));
                 return Command.SINGLE_SUCCESS;
             }
         }
@@ -52,17 +49,17 @@ public class GetUuidCommand {
         String name = MinecraftAPI.getName(uuid);
         if (name != null && !name.trim().isEmpty()) {
             try {
-                Text uuidText = Text.literal(uuid).styled(style -> style
+                Text uuidText = new LiteralText(uuid).styled(style -> style
                         .withUnderline(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("click.copy.uuid")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("click.copy.uuid")))
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
                 );
-                source.sendFeedback(Text.translatable("command.getuuid.uuid.success", uuidText, name));
+                source.sendFeedback(new TranslatableText("command.getuuid.uuid.success", uuidText, name));
             } catch (Exception e) {
-                source.sendError(Text.translatable("command.all.error"));
+                source.sendError(new TranslatableText("command.all.error"));
             }
         } else {
-            source.sendError(Text.translatable("command.all.error"));
+            source.sendError(new TranslatableText("command.all.error"));
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -71,18 +68,18 @@ public class GetUuidCommand {
         String uuid = MinecraftAPI.getUUID(name);
         if (uuid != null && !uuid.trim().isEmpty()) {
             try {
-                Text uuidText = Text.literal(uuid).styled(style -> style
+                Text uuidText = new LiteralText(uuid).styled(style -> style
                         .withUnderline(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to copy the uuid!")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("click.copy.uuid")))
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
                 );
-                source.sendFeedback(Text.translatable("command.getuuid.name.success", name, uuidText));
+                source.sendFeedback(new TranslatableText("command.getuuid.name.success", name, uuidText));
 
             } catch (Exception e) {
-                source.sendError(Text.translatable("command.all.error"));
+                source.sendError(new TranslatableText("command.all.error"));
             }
         } else {
-            source.sendError(Text.translatable("command.all.invalid.name"));
+            source.sendError(new TranslatableText("command.all.invalid.name"));
         }
         return Command.SINGLE_SUCCESS;
     }
