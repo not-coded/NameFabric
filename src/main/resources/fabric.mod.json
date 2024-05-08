@@ -30,6 +30,6 @@
     "fabric-api-base": "*",
     "fabric-resource-loader-v0": "*",
     "minecraft": ">1.19-alpha.22.11.a",
-    "java": ">=11"
+    "java": ">=17"
   }
 }
