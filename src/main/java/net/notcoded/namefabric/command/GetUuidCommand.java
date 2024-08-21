@@ -3,18 +3,21 @@ package net.notcoded.namefabric.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
+//? if >=1.19 {
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+//?} elif <1.19 {
+/*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+*///?}
+
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
-
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.CommandSource.suggestMatching;
+import static net.notcoded.namefabric.utils.VersionUtil.*;
 
 public class GetUuidCommand {
 
@@ -35,14 +38,14 @@ public class GetUuidCommand {
             try {
                 return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
             } catch (Exception e) {
-                ctx.getSource().sendError(Text.translatable("command.all.error"));
+                sendError(ctx.getSource(), "command.all.error");
                 return Command.SINGLE_SUCCESS;
             }
         } else {
             try {
                 return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
             } catch (Exception e) {
-                ctx.getSource().sendError(Text.translatable("command.all.error"));
+                sendError(ctx.getSource(), "command.all.error");
                 return Command.SINGLE_SUCCESS;
             }
         }
@@ -52,17 +55,12 @@ public class GetUuidCommand {
         String name = MinecraftAPI.getName(uuid);
         if (name != null && !name.trim().isEmpty()) {
             try {
-                Text uuidText = Text.literal(uuid).styled(style -> style
-                        .withUnderline(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("click.copy.uuid")))
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
-                );
-                source.sendFeedback(Text.translatable("command.getuuid.uuid.success", uuidText, name));
+                sendFeedback(source, "command.getuuid.uuid.success", copyUUID(uuid), name);
             } catch (Exception e) {
-                source.sendError(Text.translatable("command.all.error"));
+                sendError(source, "command.all.error");
             }
         } else {
-            source.sendError(Text.translatable("command.all.error"));
+            sendError(source, "command.all.error");
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -71,18 +69,12 @@ public class GetUuidCommand {
         String uuid = MinecraftAPI.getUUID(name);
         if (uuid != null && !uuid.trim().isEmpty()) {
             try {
-                Text uuidText = Text.literal(uuid).styled(style -> style
-                        .withUnderline(true)
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to copy the uuid!")))
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
-                );
-                source.sendFeedback(Text.translatable("command.getuuid.name.success", name, uuidText));
-
+                sendFeedback(source, "command.getuuid.name.success", name, copyUUID(uuid));
             } catch (Exception e) {
-                source.sendError(Text.translatable("command.all.error"));
+                sendError(source, "command.all.error");
             }
         } else {
-            source.sendError(Text.translatable("command.all.invalid.name"));
+            sendError(source, "command.all.invalid.name");
         }
         return Command.SINGLE_SUCCESS;
     }

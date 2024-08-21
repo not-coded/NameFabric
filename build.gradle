@@ -1,34 +1,53 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
-	id 'maven-publish'
+	//id("dev.kikugie.stonecutter")
+	id("fabric-loom") version "1.7-SNAPSHOT"
+	id("maven-publish")
 }
 
-version = project.mod_version + "+" + "1.19+"
-group = project.maven_group
+archivesBaseName = property("mod.name")
+version = "${property("mod.version")}" + "+" + "${property("mod.version_name")}"
+group = property("mod.maven_group")
 
 base {
-	archivesName = project.archives_base_name
+	archivesName = archivesBaseName
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	minecraft "com.mojang:minecraft:${property('deps.minecraft')}"
+	mappings "net.fabricmc:yarn:${property('deps.yarn_mappings')}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${property('deps.fabric_loader')}"
 
-	modImplementation("net.fabricmc.fabric-api:fabric-api:$project.fabric_version")
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${property('deps.fabric_api')}"
 }
 
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+loom {
+	runConfigs.all {
+		ideConfigGenerated true // Run configurations are not created for subprojects by default
+		runDir "../../run" // Use a shared run folder and just create separate worlds
 	}
 }
 
+def target = ">=${property("mod.min_target")}- <=${property("mod.max_target")}"
+
+processResources {
+	def expandProps = [
+			'version': project.version,
+			"minecraftVersion": target,
+			"javaVersion": project.property("deps.java")
+	]
+
+	filesMatching('fabric.mod.json') {
+		expand expandProps
+	}
+
+	inputs.properties(expandProps)
+}
+
 tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = 'UTF-8'
+
 	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
+	it.options.getRelease().set(project.property("deps.java") as Integer)
 }
 
 java {
@@ -37,12 +56,45 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	def java = property("deps.java") == "8" ? JavaVersion.VERSION_1_8 : JavaVersion.VERSION_17
+
+	sourceCompatibility = java
+	targetCompatibility = java
 }
 
 jar {
 	from("LICENSE") {
 		rename { "${it}_${project.archivesBaseName}"}
+	}
+}
+
+def collectJars = tasks.register("collectJars", Copy) { copy ->
+
+	def task = tasks.named("remapJar")
+
+	dependsOn(task)
+
+	copy.from task
+	copy.into rootProject.buildDir.path + "/libs"
+}
+
+// Set up assemble to depend on the collectJars task, so it gets run on build.
+assemble {
+	dependsOn(collectJars)
+}
+
+if (stonecutter.current.isActive) {
+	loom {
+		runConfigs.client {
+			ideConfigGenerated = true
+			vmArgs "-Dmixin.debug.export=true"
+			runDir "../../run"
+		}
+	}
+
+	rootProject.tasks.register("buildActive") {
+		setGroup "project"
+
+		dependsOn tasks.named("build")
 	}
 }

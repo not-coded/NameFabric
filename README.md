@@ -9,3 +9,8 @@ This mod allows you to get public player data like past usernames, current skin,
 - **/getuuid** | Gets the uuid of a player.
 - **/getskin** | Gets the current skin of a player.
 - **/getcape** | Gets the current cape of a player.
+
+## Building
+- Clone the repository
+    - `git clone https://github.com/not-coded/NameFabric`
+- Run `./gradlew chiseledBuild`

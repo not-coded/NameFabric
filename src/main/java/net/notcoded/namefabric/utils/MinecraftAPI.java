@@ -1,9 +1,10 @@
 package net.notcoded.namefabric.utils;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.util.HashMap;
+
+import static net.notcoded.namefabric.utils.VersionUtil.parseString;
 
 public class MinecraftAPI {
 
@@ -13,48 +14,52 @@ public class MinecraftAPI {
 
     public static String getUUID(String name) {
 
-        if(cachedUUIDs.get(name) != null) return cachedUUIDs.get(name);
+        if(cachedUUIDs.get(name.toLowerCase()) != null) return cachedUUIDs.get(name.toLowerCase());
 
-        String response = null;
+        String response;
 
         try {
             response = HttpAPI.get(String.format("https://api.mojang.com/users/profiles/minecraft/%s", name));
-        } catch(Exception ignored) { }
+        } catch(Exception ignored) {
+            return null;
+        }
 
-        if(response != null && !response.trim().isEmpty())  {
-            JsonElement result = JsonParser.parseString(response);
+        if (response == null || response.trim().isEmpty()) return null;
 
-            String uuid = result.getAsJsonObject().get("id").getAsString();
 
-            if (uuid != null && !uuid.trim().isEmpty() && (uuid.length() == 32 || uuid.length() == 36)) {
-                cachedNames.put(uuid, name);
-                return uuid;
-            }
+        JsonElement result = parseString(response);
+        String uuid = result.getAsJsonObject().get("id").getAsString();
+
+        if (uuid != null && !uuid.trim().isEmpty() && (uuid.length() == 32 || uuid.length() == 36)) {
+            cachedNames.put(uuid, name.toLowerCase());
+            return uuid;
         }
 
         return response;
     }
 
-    public static String getName(String uuid){
+    public static String getName(String uuid) {
+        if (cachedNames.get(uuid.toLowerCase()) != null) return cachedNames.get(uuid.toLowerCase());
 
-        if(cachedNames.get(uuid) != null) return cachedNames.get(uuid);
-
-        String response = null;
+        String response;
 
         try {
             response = HttpAPI.get(String.format("https://sessionserver.mojang.com/session/minecraft/profile/%s", uuid));
-        } catch(Exception ignored) { }
-        if(response != null) {
-            JsonElement result = JsonParser.parseString(response);
-
-            String name = result.getAsJsonObject().get("name").getAsString();
-
-            if (name != null && !name.trim().isEmpty()) {
-                cachedUUIDs.put(name, uuid);
-                return name;
-            }
+        } catch (Exception ignored) {
+            return null;
         }
 
-        return response;
+        if (response == null || response.trim().isEmpty()) return null;
+
+        JsonElement result = parseString(response);
+        String name = result.getAsJsonObject().get("name").getAsString();
+
+        if (name != null && !name.trim().isEmpty()) {
+            cachedUUIDs.put(name, uuid.toLowerCase());
+            return name;
+        }
+
+
+        return null;
     }
 }

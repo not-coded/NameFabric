@@ -1,35 +1,41 @@
 package net.notcoded.namefabric.command;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-import net.minecraft.text.Text;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.HashMap;
-
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static net.minecraft.command.CommandSource.suggestMatching;
+import static net.notcoded.namefabric.utils.VersionUtil.*;
+
+//? if >=1.19 {
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+//?} elif <1.19 {
+/*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.notcoded.namefabric.utils.HttpAPI;
+*///?}
 
 public class GetCapeCommand {
+    //? if >=1.19 {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
-    private static final int DURATION = 5; // seconds
-
+    //?}
     private static String playerName;
     private static boolean isUsingPlayerName = false;
+
     public static HashMap<String, String> capes = new HashMap<>();
+
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("getcape")
                 .then(ClientCommandManager.argument("player/uuid", string())
@@ -39,64 +45,75 @@ public class GetCapeCommand {
                                 try {
                                     return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
-                                    return Command.SINGLE_SUCCESS;
+                                    sendError(ctx.getSource(), "command.all.error");
+                                    return 0;
                                 }
                             } else {
                                 try {
                                     return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                                 } catch (Exception e) {
-                                    ctx.getSource().sendError(Text.translatable("command.all.error"));
-                                    return Command.SINGLE_SUCCESS;
+                                    sendError(ctx.getSource(), "command.all.error");
+                                    return 0;
                                 }
                             }
                         })));
     }
+
     private static String identifyCape(@NotNull String url) {
+
+        System.out.println(url);
+
         String cape;
         for (int i = 0; i < capes.size(); i++){
             cape = capes.get(url);
             if(cape != null && !cape.trim().isEmpty()) return cape;
         }
+
         return "No";
+    }
+
+
+    private static void handleResponse(FabricClientCommandSource source, String response) {
+        String capeurl = "";
+        JsonElement result = parseString(response);
+        if(!isUsingPlayerName){
+            playerName = result.getAsJsonObject().get("name").getAsString();
+        }
+        try {
+            if (result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString() != null) {
+                capeurl = new String(Base64.getDecoder().decode(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
+            }
+        } catch (Exception e) {
+            sendError(source, "command.all.error");
+        }
+
+        try{
+            if(!capeurl.trim().isEmpty()){
+                JsonElement result2 = parseString(capeurl);
+                capeurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("CAPE").getAsJsonObject().get("url").getAsString();
+            }
+        } catch (Exception ignored) {}
+
+        sendFeedback(source,"command.getcape.success", playerName, identifyCape(capeurl));
     }
 
     private static int getCapesUUID(@NotNull FabricClientCommandSource source, @NotNull String uuid) {
         if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName){
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid))
-                    .timeout(Duration.ofSeconds(DURATION))
+            String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
+
+            //? if >=1.19 {
+            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                    .timeout(Duration.ofSeconds(5))
                     .GET()
                     .build();
             httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenApply(HttpResponse::body)
-                    .thenAccept(response -> source.getClient().send(() -> {
-                        String capeurl = "";
-                        JsonElement result = JsonParser.parseString(response);
-                        if(!isUsingPlayerName){
-                            JsonElement result1 = JsonParser.parseString(response);
-                            playerName = result1.getAsJsonObject().get("name").getAsString();
-                        }
-                        try {
-                            if (result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString() != null) {
-                                capeurl = new String(Base64.getDecoder().decode(result.getAsJsonObject().getAsJsonArray("properties").get(0).getAsJsonObject().get("value").getAsString()));
-                            }
-                        } catch (Exception e) {
-                            source.sendError(Text.translatable("command.all.error"));
-                        }
-                        try{
-                            if(!capeurl.trim().isEmpty()){
-                                JsonElement result2 = JsonParser.parseString(capeurl);
-                                capeurl = result2.getAsJsonObject().get("textures").getAsJsonObject().get("CAPE").getAsJsonObject().get("url").getAsString();
-                            }
-                        } catch (Exception ignored){
-                        }
-
-                        source.sendFeedback(Text.translatable("command.getcape.success", playerName, identifyCape(capeurl)));
-                    }));
-
+                    .thenAccept(response -> source.getClient().send(() -> handleResponse(source, response)));
+            //?} elif <1.19 {
+            /*handleResponse(source, HttpAPI.get(url));            *///?}
 
         } else {
-            source.sendError(Text.translatable("command.all.invalid.uuid"));
+            sendError(source, "command.all.invalid.uuid");
         }
         playerName = null;
         isUsingPlayerName = false;
@@ -112,10 +129,10 @@ public class GetCapeCommand {
                 isUsingPlayerName = true;
                 getCapesUUID(source, uuid);
             } catch (Exception e) {
-                source.sendError(Text.translatable("command.all.error"));
+                sendError(source, "command.all.error");
             }
         } else {
-            source.sendError(Text.translatable("command.all.invalid.name"));
+            sendError(source, "command.all.invalid.name");
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -146,6 +163,11 @@ public class GetCapeCommand {
         capes.put("http://textures.minecraft.net/texture/ca29f5dd9e94fb1748203b92e36b66fda80750c87ebc18d6eafdb0e28cc1d05f", "Translator (Japanese)");
         capes.put("http://textures.minecraft.net/texture/f9a76537647989f9a0b6d001e320dac591c359e9e61a31f4ce11c88f207f0ad4", "Vanilla");
         capes.put("http://textures.minecraft.net/texture/afd553b39358a24edfe3b8a9a939fa5fa4faa4d9a9c3d6af8eafb377fa05c2bb", "Cherry Blossom");
+        capes.put("http://textures.minecraft.net/texture/cd9d82ab17fd92022dbd4a86cde4c382a7540e117fae7b9a2853658505a80625   ", "15th Anniversary");
+        capes.put("http://textures.minecraft.net/texture/cb40a92e32b57fd732a00fc325e7afb00a7ca74936ad50d8e860152e482cfbde", "Purple Heart");
+        capes.put("http://textures.minecraft.net/texture/569b7f2a1d00d26f30efe3f9ab9ac817b1e6d35f4f3cfb0324ef2d328223d350", "Follower's");
+        capes.put("Valentine Texture", "Valentine");
+        capes.put("Test Texture", "Test");
+        capes.put("http://textures.minecraft.net/texture/56c35628fe1c4d59dd52561a3d03bfa4e1a76d397c8b9c476c2f77cb6aebb1df", "MCC 15th Year");
     }
 }
-
