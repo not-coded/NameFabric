@@ -39,19 +39,9 @@ public class GetSkinCommand {
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
                         .executes(ctx -> {
                             if(getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36){
-                                try {
-                                    return getSkinsUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    sendError(ctx.getSource(), "command.all.error");
-                                }
-                            } else {
-                                try {
-                                    return getSkinsPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    sendError(ctx.getSource(), "command.all.error");
-                                }
+                                return getSkinsUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                             }
-                            return Command.SINGLE_SUCCESS;
+                            return getSkinsPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                         })));
     }
 
@@ -87,7 +77,7 @@ public class GetSkinCommand {
             return;
         }
 
-        sendFeedback(source, "command.getskin.success", playerName, webLink(finalSkinURL));
+        sendFeedback(source, "command.getskin.success", playerName, webLinkText(finalSkinURL));
     }
 
     private static int getSkinsUUID(FabricClientCommandSource source, String uuid) {
@@ -115,13 +105,9 @@ public class GetSkinCommand {
     public static int getSkinsPlayer(FabricClientCommandSource source, String name) {
         String uuid = MinecraftAPI.getUUID(name);
         if(uuid != null && !uuid.trim().isEmpty()){
-            try {
-                playerName = name;
-                isUsingPlayerName = true;
-                getSkinsUUID(source, uuid);
-            } catch (Exception e) {
-                sendError(source, "command.all.error");
-            }
+            playerName = name;
+            isUsingPlayerName = true;
+            getSkinsUUID(source, uuid);
         } else{
             sendError(source, "command.all.invalid.name");
         }

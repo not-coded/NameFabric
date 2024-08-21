@@ -42,20 +42,9 @@ public class GetCapeCommand {
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
                         .executes(ctx -> {
                             if(getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36){
-                                try {
-                                    return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    sendError(ctx.getSource(), "command.all.error");
-                                    return 0;
-                                }
-                            } else {
-                                try {
-                                    return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception e) {
-                                    sendError(ctx.getSource(), "command.all.error");
-                                    return 0;
-                                }
+                                return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                             }
+                            return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                         })));
     }
 
@@ -124,13 +113,9 @@ public class GetCapeCommand {
         String uuid = MinecraftAPI.getUUID(name);
 
         if (uuid != null && (uuid.length() == 32 || uuid.length() == 36)) {
-            try {
-                playerName = name;
-                isUsingPlayerName = true;
-                getCapesUUID(source, uuid);
-            } catch (Exception e) {
-                sendError(source, "command.all.error");
-            }
+            playerName = name;
+            isUsingPlayerName = true;
+            getCapesUUID(source, uuid);
         } else {
             sendError(source, "command.all.invalid.name");
         }

@@ -29,8 +29,6 @@ import net.notcoded.namefabric.utils.HttpAPI;
 *///?}
 
 public class NameHistoryCommand {
-    private static boolean isUsingPlayerName = false;
-
     //? if >=1.19 {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     //?}
@@ -41,19 +39,9 @@ public class NameHistoryCommand {
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
                         .executes(ctx -> {
                             if(getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36){
-                                try {
-                                    return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (Exception ignored) {
-                                    sendError(ctx.getSource(), "command.all.error");
-                                    return Command.SINGLE_SUCCESS;
-                                }
+                                return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
                             } else {
-                                try {
-                                    return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
-                                } catch (JsonIOException e) {
-                                    sendError(ctx.getSource(), "command.all.error");
-                                    return Command.SINGLE_SUCCESS;
-                                }
+                                return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
                             }
                         })));
     }
@@ -72,8 +60,7 @@ public class NameHistoryCommand {
     }
 
     private static int getNamesUUID(FabricClientCommandSource source, String uuid) {
-        if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName) {
-            isUsingPlayerName = false;
+        if(uuid.length() == 32 || uuid.length() == 36) {
             String url = String.format("https://laby.net/api/user/%s/get-names", uuid);
 
             //? if >=1.19 {
@@ -88,7 +75,7 @@ public class NameHistoryCommand {
              /*handleResponse(source, HttpAPI.get(url));            *///?}
 
 
-        } else{
+        } else {
             sendError(source, "command.all.invalid.uuid");
             return 0;
         }
@@ -99,12 +86,7 @@ public class NameHistoryCommand {
     public static int getNamesPlayer(FabricClientCommandSource source, String name){
         String uuid = MinecraftAPI.getUUID(name);
         if(uuid != null && !uuid.trim().isEmpty()){
-            try {
-                isUsingPlayerName = true;
-                getNamesUUID(source, uuid);
-            } catch (Exception ignored) {
-                sendError(source, "command.all.error");
-            }
+            getNamesUUID(source, uuid);
         } else{
             sendError(source, "command.all.invalid.name");
         }

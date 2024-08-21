@@ -13,16 +13,9 @@ public class MinecraftAPI {
     public static HashMap<String, String> cachedUUIDs = new HashMap<>();
 
     public static String getUUID(String name) {
-
         if(cachedUUIDs.get(name.toLowerCase()) != null) return cachedUUIDs.get(name.toLowerCase());
 
-        String response;
-
-        try {
-            response = HttpAPI.get(String.format("https://api.mojang.com/users/profiles/minecraft/%s", name));
-        } catch(Exception ignored) {
-            return null;
-        }
+        String response = HttpAPI.get(String.format("https://api.mojang.com/users/profiles/minecraft/%s", name));;
 
         if (response == null || response.trim().isEmpty()) return null;
 

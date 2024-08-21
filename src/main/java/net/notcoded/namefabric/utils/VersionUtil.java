@@ -32,7 +32,7 @@ public class VersionUtil {
     }
 
 
-    public static Text webLink(String link) {
+    public static Text webLinkText(String link) {
         //? if >=1.19 {
         return Text.literal(link).styled(style -> style
                 .withUnderline(true)
@@ -48,7 +48,7 @@ public class VersionUtil {
         *///?}
     }
 
-    public static Text copyUUID(String uuid) {
+    public static Text copyUUIDText(String uuid) {
         //? if >=1.19 {
         return Text.literal(uuid).styled(style -> style
                 .withUnderline(true)

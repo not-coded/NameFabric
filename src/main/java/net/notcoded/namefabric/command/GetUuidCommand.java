@@ -34,45 +34,28 @@ public class GetUuidCommand {
     }
 
     private static int execute(CommandContext<FabricClientCommandSource> ctx) {
-        if (getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36) {
-            try {
-                return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-            } catch (Exception e) {
-                sendError(ctx.getSource(), "command.all.error");
-                return Command.SINGLE_SUCCESS;
-            }
+        String playerUUID = getString(ctx, "player/uuid");
+        if (playerUUID.length() == 32 || playerUUID.length() == 36) {
+            return getNamesUUID(ctx.getSource(), playerUUID);
         } else {
-            try {
-                return getUuidName(ctx.getSource(), getString(ctx, "player/uuid"));
-            } catch (Exception e) {
-                sendError(ctx.getSource(), "command.all.error");
-                return Command.SINGLE_SUCCESS;
-            }
+            return getUUIDName(ctx.getSource(), playerUUID);
         }
     }
 
     private static int getNamesUUID(FabricClientCommandSource source, @NotNull String uuid) {
         String name = MinecraftAPI.getName(uuid);
         if (name != null && !name.trim().isEmpty()) {
-            try {
-                sendFeedback(source, "command.getuuid.uuid.success", copyUUID(uuid), name);
-            } catch (Exception e) {
-                sendError(source, "command.all.error");
-            }
+            sendFeedback(source, "command.getuuid.uuid.success", copyUUIDText(uuid), name);
         } else {
             sendError(source, "command.all.error");
         }
         return Command.SINGLE_SUCCESS;
     }
 
-    public static int getUuidName(FabricClientCommandSource source, String name) {
+    public static int getUUIDName(FabricClientCommandSource source, String name) {
         String uuid = MinecraftAPI.getUUID(name);
         if (uuid != null && !uuid.trim().isEmpty()) {
-            try {
-                sendFeedback(source, "command.getuuid.name.success", name, copyUUID(uuid));
-            } catch (Exception e) {
-                sendError(source, "command.all.error");
-            }
+            sendFeedback(source, "command.getuuid.name.success", name, copyUUIDText(uuid));
         } else {
             sendError(source, "command.all.invalid.name");
         }
