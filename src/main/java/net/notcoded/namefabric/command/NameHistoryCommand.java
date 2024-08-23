@@ -2,7 +2,6 @@ package net.notcoded.namefabric.command;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
@@ -51,7 +50,7 @@ public class NameHistoryCommand {
         if (result.isJsonArray()) {
             JsonArray array = result.getAsJsonArray();
             List<String> names = new ArrayList<>();
-            array.forEach(name -> names.add(name.getAsJsonObject().get("name").getAsString()));
+            array.forEach(name -> names.add(name.getAsJsonObject().get("name").getAsString().replaceAll("\uFF0D", "[hidden]")));
             String player = names.get(names.size() - 1);
             sendFeedback(source, "command.namehistory.success", player, String.join(", ", names));
         } else {

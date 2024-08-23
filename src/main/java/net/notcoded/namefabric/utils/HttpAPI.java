@@ -1,6 +1,5 @@
 package net.notcoded.namefabric.utils;
 
-import org.apache.http.HttpRequest;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
