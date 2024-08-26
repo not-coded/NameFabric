@@ -5,8 +5,6 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.notcoded.namefabric.utils.MinecraftAPI;
-import java.net.URI;
-import java.time.Duration;
 import java.util.Base64;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
@@ -19,6 +17,8 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.URI;
+import java.time.Duration;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;

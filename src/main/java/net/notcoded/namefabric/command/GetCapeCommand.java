@@ -6,8 +6,7 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
-import java.net.URI;
-import java.time.Duration;
+
 import java.util.Base64;
 import java.util.HashMap;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
@@ -21,6 +20,8 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.URI;
+import java.time.Duration;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -148,7 +149,7 @@ public class GetCapeCommand {
         capes.put("http://textures.minecraft.net/texture/ca29f5dd9e94fb1748203b92e36b66fda80750c87ebc18d6eafdb0e28cc1d05f", "Translator (Japanese)");
         capes.put("http://textures.minecraft.net/texture/f9a76537647989f9a0b6d001e320dac591c359e9e61a31f4ce11c88f207f0ad4", "Vanilla");
         capes.put("http://textures.minecraft.net/texture/afd553b39358a24edfe3b8a9a939fa5fa4faa4d9a9c3d6af8eafb377fa05c2bb", "Cherry Blossom");
-        capes.put("http://textures.minecraft.net/texture/cd9d82ab17fd92022dbd4a86cde4c382a7540e117fae7b9a2853658505a80625   ", "15th Anniversary");
+        capes.put("http://textures.minecraft.net/texture/cd9d82ab17fd92022dbd4a86cde4c382a7540e117fae7b9a2853658505a80625", "15th Anniversary");
         capes.put("http://textures.minecraft.net/texture/cb40a92e32b57fd732a00fc325e7afb00a7ca74936ad50d8e860152e482cfbde", "Purple Heart");
         capes.put("http://textures.minecraft.net/texture/569b7f2a1d00d26f30efe3f9ab9ac817b1e6d35f4f3cfb0324ef2d328223d350", "Follower's");
         capes.put("Valentine Texture", "Valentine");
