@@ -38,10 +38,11 @@ public class GetSkinCommand {
                 .then(ClientCommandManager.argument("player/uuid", string())
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
                         .executes(ctx -> {
-                            if(getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36){
-                                return getSkinsUUID(ctx.getSource(), getString(ctx, "player/uuid"));
+                            String playerOrUUID = getString(ctx, "player/uuid");
+                            if(playerOrUUID.length() == 32 || playerOrUUID.length() == 36){
+                                return getSkinsUUID(ctx.getSource(), playerOrUUID);
                             }
-                            return getSkinsPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
+                            return getSkinsPlayer(ctx.getSource(), playerOrUUID);
                         })));
     }
 
@@ -70,18 +71,16 @@ public class GetSkinCommand {
             return;
         }
 
-        String finalSkinURL = skinurl;
-
-        if(finalSkinURL == null) {
+        if(skinurl == null) {
             sendError(source, "command.all.error");
             return;
         }
 
-        sendFeedback(source, "command.getskin.success", playerName, webLinkText(finalSkinURL));
+        sendFeedback(source, "command.getskin.success", playerName, webLinkText(skinurl));
     }
 
     private static int getSkinsUUID(FabricClientCommandSource source, String uuid) {
-        if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName) {
+        if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName) {
             String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
 
             //? if >=1.19 {

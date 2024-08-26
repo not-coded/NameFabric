@@ -42,17 +42,15 @@ public class GetCapeCommand {
                 .then(ClientCommandManager.argument("player/uuid", string())
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
                         .executes(ctx -> {
-                            if(getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36){
-                                return getCapesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
+                            String playerOrUUID = getString(ctx, "player/uuid");
+                            if(playerOrUUID.length() == 32 || playerOrUUID.length() == 36){
+                                return getCapesUUID(ctx.getSource(), playerOrUUID);
                             }
-                            return getCapesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
+                            return getCapesPlayer(ctx.getSource(), playerOrUUID);
                         })));
     }
 
     private static String identifyCape(@NotNull String url) {
-
-        System.out.println(url);
-
         String cape;
         for (int i = 0; i < capes.size(); i++){
             cape = capes.get(url);
@@ -88,7 +86,7 @@ public class GetCapeCommand {
     }
 
     private static int getCapesUUID(@NotNull FabricClientCommandSource source, @NotNull String uuid) {
-        if(uuid.length() == 32 || uuid.length() == 36 || isUsingPlayerName){
+        if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName){
             String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
 
             //? if >=1.19 {

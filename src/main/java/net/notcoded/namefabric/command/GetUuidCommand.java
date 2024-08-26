@@ -34,12 +34,11 @@ public class GetUuidCommand {
     }
 
     private static int execute(CommandContext<FabricClientCommandSource> ctx) {
-        String playerUUID = getString(ctx, "player/uuid");
-        if (playerUUID.length() == 32 || playerUUID.length() == 36) {
-            return getNamesUUID(ctx.getSource(), playerUUID);
-        } else {
-            return getUUIDName(ctx.getSource(), playerUUID);
+        String playerOrUUID = getString(ctx, "player/uuid");
+        if (playerOrUUID.length() == 32 || playerOrUUID.length() == 36) {
+            return getNamesUUID(ctx.getSource(), playerOrUUID);
         }
+        return getUUIDName(ctx.getSource(), playerOrUUID);
     }
 
     private static int getNamesUUID(FabricClientCommandSource source, @NotNull String uuid) {

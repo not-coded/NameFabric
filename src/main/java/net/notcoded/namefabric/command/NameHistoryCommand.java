@@ -37,11 +37,11 @@ public class NameHistoryCommand {
                 .then(ClientCommandManager.argument("player/uuid", string())
                         .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
                         .executes(ctx -> {
-                            if(getString(ctx, "player/uuid").length() == 32 || getString(ctx, "player/uuid").length() == 36){
-                                return getNamesUUID(ctx.getSource(), getString(ctx, "player/uuid"));
-                            } else {
-                                return getNamesPlayer(ctx.getSource(), getString(ctx, "player/uuid"));
+                            String playerOrUUID = getString(ctx, "player/uuid");
+                            if(playerOrUUID.length() == 32 || playerOrUUID.length() == 36){
+                                return getNamesUUID(ctx.getSource(), playerOrUUID);
                             }
+                            return getNamesPlayer(ctx.getSource(), playerOrUUID);
                         })));
     }
 
@@ -72,7 +72,6 @@ public class NameHistoryCommand {
                     .thenAccept(response -> source.getClient().send(() -> handleResponse(source, response)));
             //?} elif <1.19 {
              /*handleResponse(source, HttpAPI.get(url));            *///?}
-
 
         } else {
             sendError(source, "command.all.invalid.uuid");
