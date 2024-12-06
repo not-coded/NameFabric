@@ -80,7 +80,7 @@ modrinth {
 	//featured = true
 
 	dependencies {
-		optional.project("fabric-api")
+		required.project("fabric-api")
 	}
 
 	changelog = rootProject.file("CHANGES.md").readText()
