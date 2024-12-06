@@ -67,6 +67,7 @@ tasks.register<Copy>("buildAndCollect") {
 }
 
 
+// I can't be bothered to also set this up for GitHub releases
 modrinth {
 	token.set(System.getenv("MODRINTH_TOKEN"))
 	projectId.set("namefabric")
