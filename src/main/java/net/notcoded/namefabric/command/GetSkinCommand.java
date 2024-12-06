@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.notcoded.namefabric.utils.HttpAPI;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import java.util.Base64;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
@@ -14,15 +15,9 @@ import static net.notcoded.namefabric.utils.VersionUtil.*;
 //? if >=1.19 {
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
-import java.time.Duration;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.notcoded.namefabric.utils.HttpAPI;
 *///?}
 
 public class GetSkinCommand {
@@ -30,9 +25,6 @@ public class GetSkinCommand {
     private static String playerName;
     private static boolean isUsingPlayerName = false;
 
-    //? if >=1.19 {
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-    //?}
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         dispatcher.register(ClientCommandManager.literal("getskin")
                 .then(ClientCommandManager.argument("player/uuid", string())
@@ -82,18 +74,7 @@ public class GetSkinCommand {
     private static int getSkinsUUID(FabricClientCommandSource source, String uuid) {
         if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName) {
             String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
-
-            //? if >=1.19 {
-            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                    .timeout(Duration.ofSeconds(5))
-                    .GET()
-                    .build();
-            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenAccept(response -> source.getClient().send(() -> handleResponse(source, response)));
-            //?} elif <1.19 {
-            /*handleResponse(source, HttpAPI.get(url));            *///?}
-
+            handleResponse(source, HttpAPI.get(url));
         } else {
             sendError(source, "command.all.invalid.uuid");
         }

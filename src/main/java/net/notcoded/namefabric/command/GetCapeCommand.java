@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.notcoded.namefabric.utils.HttpAPI;
 import net.notcoded.namefabric.utils.MinecraftAPI;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,21 +18,12 @@ import static net.notcoded.namefabric.utils.VersionUtil.*;
 //? if >=1.19 {
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
-import java.time.Duration;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.notcoded.namefabric.utils.HttpAPI;
 *///?}
 
 public class GetCapeCommand {
-    //? if >=1.19 {
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
-    //?}
     private static String playerName;
     private static boolean isUsingPlayerName = false;
 
@@ -89,17 +81,7 @@ public class GetCapeCommand {
         if((uuid.length() == 32 || uuid.length() == 36) || isUsingPlayerName){
             String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
 
-            //? if >=1.19 {
-            HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                    .timeout(Duration.ofSeconds(5))
-                    .GET()
-                    .build();
-            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenAccept(response -> source.getClient().send(() -> handleResponse(source, response)));
-            //?} elif <1.19 {
-            /*handleResponse(source, HttpAPI.get(url));            *///?}
-
+            handleResponse(source, HttpAPI.get(url));
         } else {
             sendError(source, "command.all.invalid.uuid");
         }
@@ -153,5 +135,6 @@ public class GetCapeCommand {
         capes.put("Valentine Texture", "Valentine");
         capes.put("Test Texture", "Test");
         capes.put("http://textures.minecraft.net/texture/56c35628fe1c4d59dd52561a3d03bfa4e1a76d397c8b9c476c2f77cb6aebb1df", "MCC 15th Year");
+        capes.put("http://textures.minecraft.net/texture/7658c5025c77cfac7574aab3af94a46a8886e3b7722a895255fbf22ab8652434", "Minecraft Experience");
     }
 }
