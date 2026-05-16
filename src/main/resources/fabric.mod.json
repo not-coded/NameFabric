@@ -20,7 +20,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "net.notcoded.namefabric.Main"
+      "net.notcoded.namefabric.NameFabric"
     ]
   },
 

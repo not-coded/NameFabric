@@ -8,10 +8,12 @@
   "command.getuuid.name.success": "The UUID of %s is: %s",
   "command.getuuid.uuid.success": "The name of %s is: %s",
 
-  "command.getcape.success": "The current cape of %s is the '%s' cape.",
+  "command.getcape.success": "The current cape of %s is the %s cape.",
+  "command.getcape.no_cape": "%s has no cape equipped.",
 
   "command.namehistory.success": "The past usernames of %s are: %s",
 
   "click.open.link": "Click to open the link!",
-  "click.copy.uuid": "Click to copy the UUID!"
+  "click.copy.uuid": "Click to copy the UUID!",
+  "click.copy.name": "Click to copy the name!"
 }

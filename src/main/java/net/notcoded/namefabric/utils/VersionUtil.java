@@ -58,7 +58,7 @@ public class VersionUtil {
     }
 
     public static Object webLinkText(String link) {
-        //? if >=26.1 {
+        //? if >=1.21.5 {
         /*return Component.literal(link).withStyle(style -> style
                 .withUnderlined(true)
                 .withHoverEvent(new HoverEvent.ShowText(Component.translatable("click.open.link")))
@@ -80,7 +80,7 @@ public class VersionUtil {
     }
 
     public static Object copyUUIDText(String uuid) {
-        //? if >=26.1 {
+        //? if >=1.21.5 {
         /*return Component.literal(uuid).withStyle(style -> style
                 .withUnderlined(true)
                 .withHoverEvent(new HoverEvent.ShowText(Component.translatable("click.copy.uuid")))
@@ -97,6 +97,28 @@ public class VersionUtil {
                 .withUnderlined(true)
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("click.copy.uuid")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
+        );
+        *///?}
+    }
+
+    public static Object copyNameText(String name) {
+        //? if >=1.21.5 {
+        /*return Component.literal(name).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("click.copy.name")))
+                .withClickEvent(new ClickEvent.CopyToClipboard(name))
+        );
+        *///?} elif >=1.19 {
+        return Component.literal(name).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("click.copy.name")))
+                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, name))
+        );
+        //?} elif <1.19 {
+        /*return new TextComponent(name).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("click.copy.name")))
+                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, name))
         );
         *///?}
     }

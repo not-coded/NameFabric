@@ -2,6 +2,7 @@ package net.notcoded.namefabric.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.notcoded.namefabric.NameFabric;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
@@ -18,12 +19,15 @@ public class CapeUtil {
 
     public static String identifyCape(@NotNull String url) {
         String textureHash = textureHash(url);
-        if (textureHash == null) return "No";
+        if (textureHash == null) return null;
 
         String cape = CAPES.get(textureHash);
         if (cape != null && !cape.trim().isEmpty()) return cape;
 
-        return "Unknown (" + textureHash.substring(0, Math.min(12, textureHash.length())) + "...)";
+        NameFabric.LOGGER.info("Unknown cape: {}", textureHash);
+        NameFabric.LOGGER.info("URL: {}", url);
+
+        return "Unknown";
     }
 
     public static String extractCapeUrl(JsonObject profile) {

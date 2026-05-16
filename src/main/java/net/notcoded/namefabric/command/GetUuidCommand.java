@@ -25,7 +25,7 @@ public class GetUuidCommand {
     private static int getNamesUUID(FabricClientCommandSource source, @NotNull String uuid) {
         String name = MinecraftAPI.getName(uuid);
         if (name != null && !name.trim().isEmpty()) {
-            sendFeedback(source, "command.getuuid.uuid.success", copyUUIDText(formatUUID(uuid)), name);
+            sendFeedback(source, "command.getuuid.uuid.success", formatUUID(uuid), copyNameText(name));
         } else {
             sendError(source, "command.all.error");
         }

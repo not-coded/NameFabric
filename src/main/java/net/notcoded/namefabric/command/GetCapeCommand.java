@@ -34,7 +34,14 @@ public class GetCapeCommand {
             JsonObject result = parseString(response).getAsJsonObject();
             String playerName = result.has("name") ? result.get("name").getAsString() : fallbackName;
             String capeUrl = CapeUtil.extractCapeUrl(result);
-            sendFeedback(source, "command.getcape.success", playerName, CapeUtil.identifyCape(capeUrl));
+            String cape = CapeUtil.identifyCape(capeUrl);
+
+            if(cape == null){
+                sendFeedback(source, "command.getcape.no_cape", playerName);
+                return;
+            }
+
+            sendFeedback(source, "command.getcape.success", playerName, cape);
         } catch (Exception e) {
             sendError(source, "command.all.error");
         }

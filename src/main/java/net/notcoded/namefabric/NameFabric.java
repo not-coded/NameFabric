@@ -9,8 +9,13 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.notcoded.namefabric.loaders.CommandLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class Main implements ClientModInitializer {
+public class NameFabric implements ClientModInitializer {
+
+	public static final Logger LOGGER = LogManager.getLogger(NameFabric.class);
+
 	@Override
 	public void onInitializeClient() {
 		//? if >=1.19 {
@@ -20,7 +25,5 @@ public class Main implements ClientModInitializer {
 		/*if(FabricLoader.getInstance().isModLoaded("fabric-command-api-v1"))
 			CommandLoader.registerCommands(ClientCommandManager.DISPATCHER);
 		*///?}
-
-
 	}
 }
