@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 
 //? if >=1.19 {
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.commands.CommandBuildContext;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 *///?}
@@ -20,7 +20,7 @@ public class CommandLoader {
     }
 
     //? if >=1.19 {
-    public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess commandRegistryAccess) {
+    public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext commandBuildContext) {
         registerCommands(dispatcher);
     }
     //?}

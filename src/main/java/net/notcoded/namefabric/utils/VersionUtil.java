@@ -2,75 +2,109 @@ package net.notcoded.namefabric.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+//? if <1.19 {
+/*import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+*///?}
 
-//? if >=1.19 {
+import java.net.URI;
+
+//? if >=26.1 {
+/*import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+*///?} elif >=1.19 {
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 //?} elif <1.19 {
-/*import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.text.LiteralText;
+/*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 *///?}
 
 public class VersionUtil {
+    public static LiteralArgumentBuilder<FabricClientCommandSource> literal(String name) {
+        //? if >=26.1 {
+        /*return ClientCommands.literal(name);
+        *///?} else {
+        return ClientCommandManager.literal(name);
+        //?}
+    }
+
+    public static <T> RequiredArgumentBuilder<FabricClientCommandSource, T> argument(String name, ArgumentType<T> type) {
+        //? if >=26.1 {
+        /*return ClientCommands.argument(name, type);
+        *///?} else {
+        return ClientCommandManager.argument(name, type);
+        //?}
+    }
 
     public static JsonElement parseString(String response) {
         //? if >=1.19 {
         return JsonParser.parseString(response);
         //?} elif <1.19 {
-         /*return new JsonParser().parse(response);        *///?}
+        /*return new JsonParser().parse(response);        *///?}
     }
 
     public static void sendError(FabricClientCommandSource source, String translatable, Object... args) {
-
         //? if >=1.19 {
-        source.sendError(Text.translatable(translatable, args));
+        source.sendError(Component.translatable(translatable, args));
         //?} elif <1.19 {
-         /*source.sendError(new TranslatableText(translatable, args));        *///?}
+        /*source.sendError(new TranslatableComponent(translatable, args));        *///?}
     }
 
-
-    public static Text webLinkText(String link) {
-        //? if >=1.19 {
-        return Text.literal(link).styled(style -> style
-                .withUnderline(true)
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("click.open.link")))
+    public static Object webLinkText(String link) {
+        //? if >=26.1 {
+        /*return Component.literal(link).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("click.open.link")))
+                .withClickEvent(new ClickEvent.OpenUrl(URI.create(link)))
+        );
+        *///?} elif >=1.19 {
+        return Component.literal(link).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("click.open.link")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link))
         );
         //?} elif <1.19 {
-        /*return new LiteralText(link).styled(style -> style
-                .withUnderline(true)
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("click.open.link")))
+        /*return new TextComponent(link).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("click.open.link")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link))
         );
         *///?}
     }
 
-    public static Text copyUUIDText(String uuid) {
-        //? if >=1.19 {
-        return Text.literal(uuid).styled(style -> style
-                .withUnderline(true)
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("click.copy.uuid")))
+    public static Object copyUUIDText(String uuid) {
+        //? if >=26.1 {
+        /*return Component.literal(uuid).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("click.copy.uuid")))
+                .withClickEvent(new ClickEvent.CopyToClipboard(uuid))
+        );
+        *///?} elif >=1.19 {
+        return Component.literal(uuid).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("click.copy.uuid")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
         );
         //?} elif <1.19 {
-        /*return new LiteralText(uuid).styled(style -> style
-                .withUnderline(true)
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("click.copy.uuid")))
+        /*return new TextComponent(uuid).withStyle(style -> style
+                .withUnderlined(true)
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("click.copy.uuid")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, uuid))
         );
         *///?}
     }
-
 
     public static void sendFeedback(FabricClientCommandSource source, String translatable, Object... args) {
-
         //? if >=1.19 {
-        source.sendFeedback(Text.translatable(translatable, args));
+        source.sendFeedback(Component.translatable(translatable, args));
         //?} elif <1.19 {
-         /*source.sendFeedback(new TranslatableText(translatable, args));        *///?}
+        /*source.sendFeedback(new TranslatableComponent(translatable, args));        *///?}
     }
-
 }

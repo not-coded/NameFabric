@@ -7,15 +7,12 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.notcoded.namefabric.utils.HttpAPI;
 import net.notcoded.namefabric.utils.MinecraftAPI;
+import net.notcoded.namefabric.utils.CommandUtil;
 import java.util.ArrayList;
 import java.util.List;
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
-import static net.minecraft.command.CommandSource.suggestMatching;
 import static net.notcoded.namefabric.utils.VersionUtil.*;
 
 //? if >=1.19 {
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
@@ -24,16 +21,7 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 
 public class NameHistoryCommand {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-        dispatcher.register(ClientCommandManager.literal("namehistory")
-                .then(ClientCommandManager.argument("player/uuid", string())
-                        .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
-                        .executes(ctx -> {
-                            String playerOrUUID = getString(ctx, "player/uuid");
-                            if(playerOrUUID.length() == 32 || playerOrUUID.length() == 36){
-                                return getNamesUUID(ctx.getSource(), playerOrUUID);
-                            }
-                            return getNamesPlayer(ctx.getSource(), playerOrUUID);
-                        })));
+        CommandUtil.registerPlayerOrUuid(dispatcher, "namehistory", NameHistoryCommand::getNamesUUID, NameHistoryCommand::getNamesPlayer);
     }
 
     private static void handleResponse(FabricClientCommandSource source, String response) {

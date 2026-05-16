@@ -1,0 +1,35 @@
+# See https://stonecutter.kikugie.dev/wiki/config/properties#centralized-properties
+mod.id = "namefabric"
+mod.name = "NameFabric"
+mod.group = "net.notcoded"
+mod.version = "1.0.6"
+
+deps.fabric_loader = "0.15.6"
+loomx.loom_version = "1.16.0-alpha.13"
+
+["1.16.5"]
+mod.version_name = "1.16.5+"
+mod.target = ">=1.16.5- <=1.18.2"
+publishing.target = ["1.16.5", "1.17", "1.17.1", "1.18", "1.18.1", "1.18.2"]
+
+deps.minecraft = "1.16.5"
+deps.fabric_api = "0.42.0+1.16"
+deps.java = "8"
+
+["1.20.6"]
+mod.version_name = "1.19+"
+mod.target = ">=1.19- <=1.22"
+publishing.target = ["1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4", "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6", "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11"]
+
+deps.minecraft = "1.20.6"
+deps.fabric_api = "0.98.0+1.20.6"
+deps.java = "17"
+
+["26.1"]
+mod.version_name = "26.1+"
+mod.target = ">=26.1"
+publishing.target = ["26.1", "26.1.1", "26.1.2"]
+
+deps.minecraft = "26.1.2"
+deps.fabric_api = "0.146.1+26.1.2"
+deps.java = "25"

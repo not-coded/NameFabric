@@ -1,46 +1,49 @@
 plugins {
-	id("fabric-loom") version "1.9.2"
+	id("dev.kikugie.loom-back-compat") version "0.3"
 	id("com.modrinth.minotaur") version "2.+"
 }
 
-val modName = property("mod.name").toString()
-version = "${property("mod.version")}" + "+" + "${property("mod.version_name")}"
-group = property("mod.maven_group").toString()
+val modId: String = sc.properties["mod.id"]
+val modGroup: String = sc.properties["mod.group"]
+val modVersion: String = sc.properties["mod.version"]
+val modVersionName: String = sc.properties["mod.version_name"]
+val minecraftVersion: String = sc.properties["deps.minecraft"]
+val fabricLoaderVersion: String = sc.properties["deps.fabric_loader"]
+val fabricApiVersion: String = sc.properties["deps.fabric_api"]
+val javaTargetVersion: String = sc.properties["deps.java"]
+val minecraftTarget: String = sc.properties["mod.target"]
 
-
-base {
-	archivesName.set(modName)
-}
+version = "$modVersion+$modVersionName"
+group = modGroup
+base.archivesName = modId
 
 dependencies {
-	minecraft("com.mojang:minecraft:${property("deps.minecraft")}")
-	mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
-	modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+	minecraft("com.mojang:minecraft:$minecraftVersion")
+	loomx.applyMojangMappings()
 
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+	modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+	modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
 }
 
 loom {
-	decompilers {
-		get("vineflower").apply { // Adds names to lambdas - useful for mixins
-			options.put("mark-corresponding-synthetics", "1")
-		}
+	fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json") // Useful for interface injection
+
+	decompilerOptions.named("vineflower") {
+		options.put("mark-corresponding-synthetics", "1") // Adds names to lambdas - useful for mixins
 	}
 
 	runConfigs.all {
 		ideConfigGenerated(true)
-		vmArgs("-Dmixin.debug.export=true")
-		runDir = "../../run"
+		vmArgs("-Dmixin.debug.export=true") // Exports transformed classes for debugging
+		runDir = "../../run" // Shares the run directory between versions
 	}
 }
 
-val target = ">=${property("mod.min_target")}- <=${property("mod.max_target")}"
-
-tasks.processResources {
+tasks.named<ProcessResources>("processResources") {
 	val expandProps = mapOf(
 		"version" to project.version,
-		"minecraftVersion" to target,
-		"javaVersion" to project.property("deps.java")
+		"minecraftVersion" to minecraftTarget,
+		"javaVersion" to javaTargetVersion
 	)
 
 	filesMatching("fabric.mod.json") {
@@ -53,7 +56,7 @@ tasks.processResources {
 java {
 	withSourcesJar()
 
-	val javaVersion = if (project.property("deps.java") == "8") JavaVersion.VERSION_1_8 else JavaVersion.VERSION_17
+	val javaVersion = JavaVersion.toVersion(javaTargetVersion)
 
 	sourceCompatibility = javaVersion
 	targetCompatibility = javaVersion
@@ -61,7 +64,7 @@ java {
 
 tasks.register<Copy>("buildAndCollect") {
 	group = "build"
-	from(tasks.remapJar.get().archiveFile)
+	from(loomx.modJar.map { it.archiveFile })
 	into(rootProject.layout.buildDirectory.file("libs"))
 	dependsOn("build")
 }
@@ -73,8 +76,8 @@ modrinth {
 	versionNumber.set(version.toString())
 	versionName.set("v$version")
 	versionType.set("release")
-	uploadFile.set(tasks.remapJar)
-	gameVersions.addAll(property("publishing.supported_versions").toString().split(","))
+	uploadFile.set(loomx.modJar)
+	gameVersions.addAll(sc.properties.rawOrNull("publishing", "target")?.asList().orEmpty().map { it.toString() })
 	loaders.addAll("fabric", "quilt")
 	//featured = true
 

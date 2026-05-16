@@ -6,14 +6,11 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.notcoded.namefabric.utils.HttpAPI;
 import net.notcoded.namefabric.utils.MinecraftAPI;
+import net.notcoded.namefabric.utils.CommandUtil;
 import java.util.Base64;
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-import static com.mojang.brigadier.arguments.StringArgumentType.string;
-import static net.minecraft.command.CommandSource.suggestMatching;
 import static net.notcoded.namefabric.utils.VersionUtil.*;
 
 //? if >=1.19 {
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 //?} elif <1.19 {
 /*import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
@@ -26,16 +23,7 @@ public class GetSkinCommand {
     private static boolean isUsingPlayerName = false;
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-        dispatcher.register(ClientCommandManager.literal("getskin")
-                .then(ClientCommandManager.argument("player/uuid", string())
-                        .suggests((context, builder) -> suggestMatching(context.getSource().getPlayerNames(), builder))
-                        .executes(ctx -> {
-                            String playerOrUUID = getString(ctx, "player/uuid");
-                            if(playerOrUUID.length() == 32 || playerOrUUID.length() == 36){
-                                return getSkinsUUID(ctx.getSource(), playerOrUUID);
-                            }
-                            return getSkinsPlayer(ctx.getSource(), playerOrUUID);
-                        })));
+        CommandUtil.registerPlayerOrUuid(dispatcher, "getskin", GetSkinCommand::getSkinsUUID, GetSkinCommand::getSkinsPlayer);
     }
 
 

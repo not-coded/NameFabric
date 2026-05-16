@@ -3,12 +3,22 @@ plugins {
 }
 stonecutter active "1.20.6" /* [SC] DO NOT EDIT */
 
-stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
+tasks.register("chiseledBuild") {
     group = "project"
-    ofTask("buildAndCollect")
+    dependsOn(stonecutter.tasks.named("buildAndCollect"))
 }
 
-stonecutter registerChiseled tasks.register("chiseledModrinth", stonecutter.chiseled) {
+tasks.register("chiseledModrinth") {
     group = "project"
-    ofTask("modrinth")
+    dependsOn(stonecutter.tasks.named("modrinth"))
+}
+
+// See https://stonecutter.kikugie.dev/wiki/config/params
+stonecutter.parameters {
+    filters.include("**/*.java")
+    filters.exclude("**/*.json")
+}
+
+stonecutter.tasks {
+    order("modrinth")
 }
